@@ -35,15 +35,8 @@
 
 ## Markdown моделей
 
-- Без цветового оформления (в том числе без inline-кода в тексте ячейки —
-  в Jupyter он подсвечивается) и без лишнего полужирного текста.
-- Полужирным допускаются ключевые определения классов (**move**, **anomaly**)
-  и при необходимости одно имя метода в заголовке; формулы — в `$…$`
-  и `$$…$$`.
-- В общих ячейках («предобработка», «Используемые метрики») — без
-  декоративного полужирного; классы в тексте — `$\mathrm{move}$`,
-  `$\mathrm{anomaly}$` или **anomaly** там, где явно задан положительный
-  класс.
+Правила текста — `report/style.md`: разделы «Общее для md-ячеек и отчёта»
+и «Только markdown-ячейки блокнотов».
 
 ## Метрики test (только «Список метрик» в Отчёте)
 
@@ -53,8 +46,16 @@
 - Время: `delay_median`, `delay_mean`, `delay_p95`, `delay_max`,
   `delay_n_on_time`, `delay_n_late_or_missed`
 - Классификация: `precision`, `recall`, `f1`
+- Покрытие (доли, в таблице — %): `unscored_share`, `unscored_anomaly_share`,
+  `anomaly_unscored_share`
 
-Счёт: `evaluate_test` → `TrajectoryMetrics.compute_all`. В итоговых таблицах
+Счёт: `evaluate_test` → `TrajectoryMetrics.compute_all`.
+
+Точки без оценки: score модели — `NaN`, маска `scored` передаётся в
+`evaluate_test` и `trajectory_series_pair` (в предсказании — метка `NaN`).
+`select_anomaly_threshold` и `_threshold_record` исключают такие точки из MCC
+и из ломаной операционного DL. Правила — `report/rewrite_plan.md`,
+«Принятые решения». В итоговых таблицах
 test не показывать: MCC, DLR, train-метрики, порог, время, heatmap метрик.
 MCC, operational DL и подобранный порог выводятся в `print` при подборе
 порога на train.
@@ -70,7 +71,8 @@ MCC, operational DL и подобранный порог выводятся в `
 
 ## Порог (train)
 
-Сетка по score → максимум MCC; в полосе `MCC_BAND` от лучшего MCC → минимум
+Сетка по score (`threshold_candidates`: 180 квантилей и `THRESHOLD_LOG_POINTS` значений,
+равномерных в логарифмической шкале) → максимум MCC; в полосе `MCC_BAND` от лучшего MCC → минимум
 operational distance loss (move-цепочка ENU). На test тот же порог
 без подгонки.
 
@@ -92,7 +94,7 @@ BBox: по истинным **move** (`label == 1`) на отображаемо�
 
 ## Разметка
 
-`y == "anomaly"` → `label 0`; предсказание anomaly → `0.0`, move → `1.0`
+`y == "anomaly"` → `label 0`; предсказание anomaly → `0.0`, move → `1.0`, точка без оценки → `NaN`
 в `TrajectorySeries`.
 
 ## Гигиена ячеек

@@ -59,6 +59,9 @@ class GeospatialMetrics:
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """
         Координаты ground truth и prediction после заполнения аномалий.
+
+        В prediction точки без оценки заполняются так же, как отвергнутые.
+
         Args:
             prediction: траектория с предсказаниями модели.
             ground_truth: эталонная траектория.
@@ -72,7 +75,7 @@ class GeospatialMetrics:
             time_s, ground_truth.lat, ground_truth.lon, ground_truth.anomaly_mask
         )
         pred_lat_f, pred_lon_f = GeospatialMetrics._fill_anomaly_coordinates(
-            time_s, prediction.lat, prediction.lon, prediction.anomaly_mask
+            time_s, prediction.lat, prediction.lon, prediction.anomaly_mask | prediction.unscored_mask
         )
         return gt_lat_f, gt_lon_f, pred_lat_f, pred_lon_f
 
@@ -158,7 +161,7 @@ class GeospatialMetrics:
         """
         time_s = prediction.time_seconds
         lat_f, lon_f = GeospatialMetrics._fill_anomaly_coordinates(
-            time_s, prediction.lat, prediction.lon, prediction.anomaly_mask
+            time_s, prediction.lat, prediction.lon, prediction.anomaly_mask | prediction.unscored_mask
         )
         origin_lat = float(lat_f[0])
         origin_lon = float(lon_f[0])

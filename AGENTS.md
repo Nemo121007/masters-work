@@ -1,4 +1,4 @@
-# statistical_researchs — инструкции для агента
+Пер# statistical_researchs — инструкции для агента
 
 Исследование: детекция аномалий в GPS-телеметрии судов. Метка 0 — anomaly
 (положительный класс), значение больше нуля — move.
@@ -48,9 +48,13 @@
 - Ревьюер — инструкция в `.claude/agents/reviewer.md`; `.opencode/agents/reviewer.md` задаёт права
   и отсылает к ней. Вызывается только по команде пользователя.
 - Команды OpenCode (`.opencode/commands/`): `/check-app`, `/run-notebook`, `/new-detector`, `/report`, `/review`.
+- Принятые решения по методике и коду — раздел «Принятые решения» в `report/rewrite_plan.md`;
+  каждое новое решение записывать туда сразу и опираться на них при правках.
 - Отчёт — скилл `report`; план переписывания по этапам — `report/rewrite_plan.md`;
   обозначения и термины — `report/glossary.md`. Глоссарий актуализировать в том же
   задании, где в отчёте, блокноте или `docs/notes/` появилось новое или изменённое обозначение или термин.
+- Правила текста для отчёта, markdown-ячеек блокнотов и `docs/notes/` — `report/style.md`; соблюдать при любой
+  правке текста, в том числе в `report/rewrite_plan.md`.
 - Права: Claude Code — `.claude/settings.json`, OpenCode — `opencode.jsonc`; менять согласованно.
 
 ## Согласование действий

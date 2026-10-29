@@ -31,6 +31,7 @@ class TrajectoryMetrics:
         """
         metrics: Dict[str, float] = {}
         metrics.update(ClassificationMetrics.compute(prediction, ground_truth))
+        metrics.update(ClassificationMetrics.coverage(prediction, ground_truth))
         metrics.update(TemporalMetrics.compute(prediction, ground_truth))
         metrics.update(GeospatialMetrics.compute(prediction, ground_truth))
         return metrics
@@ -53,12 +54,15 @@ if __name__ == "__main__":
         ("rmse_m", "RMSE, м"),
         ("max_deviation_m", "Max deviation, м"),
         ("distance_loss_m", "Distance loss, м"),
+        ("unscored_share", "Без оценки"),
+        ("unscored_anomaly_share", "Из них аномалий"),
+        ("anomaly_unscored_share", "Аномалий без оценки"),
     )
 
     def _format_metric_value(key: str, value: float) -> str:
         if not math.isfinite(value):
             return "—"
-        if key in {"precision", "recall", "f1", "mcc"} or key.startswith("delay_"):
+        if key in {"precision", "recall", "f1", "mcc"} or key.startswith("delay_") or key.endswith("_share"):
             return f"{value:.4f}"
         return f"{value:.2f}"
 
@@ -83,11 +87,13 @@ if __name__ == "__main__":
     predicted = labels.copy()
     predicted[8:10] = 1.0
     predicted[15] = 0.0
+    predicted[[0, 12]] = np.nan
     ground_truth = TrajectorySeries(time, longitude, latitude, labels)
     prediction = TrajectorySeries(time, longitude.copy(), latitude.copy(), predicted)
     print(
         "Тестовый трек: 21 точка. Аномалия — петля на индексах 8–12. "
-        "Модель обнаруживает её с индекса 10 и даёт ложное срабатывание на индексе 15."
+        "Модель обнаруживает её с индекса 10, даёт ложное срабатывание на индексе 15, "
+        "точки 0 и 12 — без оценки."
     )
     delayed_metrics = TrajectoryMetrics.compute_all(prediction, ground_truth)
     _print_metrics_table(delayed_metrics, title="Метрики с задержкой детекции:")

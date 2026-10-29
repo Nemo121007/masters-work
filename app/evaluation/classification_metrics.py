@@ -29,12 +29,39 @@ class ClassificationMetrics:
         return {"precision": precision, "recall": recall, "f1": f1, "mcc": mcc}
 
     @staticmethod
+    def coverage(prediction: TrajectorySeries, ground_truth: TrajectorySeries) -> Dict[str, float]:
+        """Покрытие: доли точек без оценки и их состав по эталонным классам.
+
+        Args:
+            prediction: траектория с предсказаниями модели.
+            ground_truth: эталонная траектория.
+
+        Returns:
+            Dict[str, float]: ``unscored_share`` — доля точек без оценки от всех точек;
+            ``unscored_anomaly_share`` — доля эталонных аномальных точек среди точек без оценки;
+            ``anomaly_unscored_share`` — доля эталонных аномальных точек без оценки от всех аномальных.
+            Доля с нулевым знаменателем — NaN.
+        """
+        ground_truth.assert_same_index(prediction)
+        unscored = prediction.unscored_mask
+        gt_anomaly = ground_truth.anomaly_mask
+        unscored_anomaly = float(np.sum(unscored & gt_anomaly))
+        return {
+            "unscored_share": ClassificationMetrics.__ratio(float(np.sum(unscored)), float(unscored.size)),
+            "unscored_anomaly_share": ClassificationMetrics.__ratio(unscored_anomaly, float(np.sum(unscored))),
+            "anomaly_unscored_share": ClassificationMetrics.__ratio(unscored_anomaly, float(np.sum(gt_anomaly))),
+        }
+
+    @staticmethod
     def confusion_counts(
         prediction: TrajectorySeries,
         ground_truth: TrajectorySeries,
     ) -> Tuple[float, float, float, float]:
         """
         Возвращает (TP, FP, FN, TN); положительный класс — аномалия (label == 0).
+
+        Считается только по точкам с оценкой: точки без оценки (NaN в предсказании) не входят.
+
         Args:
             prediction: Траектория, предсказанная моделью
             ground_truth: Истинная траектория
@@ -43,8 +70,9 @@ class ClassificationMetrics:
             Tuple[float, float, float, float]: (TP, FP, FN, TN).
         """
         ground_truth.assert_same_index(prediction)
-        pred_anomaly = prediction.anomaly_mask
-        gt_anomaly = ground_truth.anomaly_mask
+        scored = prediction.scored_mask
+        pred_anomaly = prediction.anomaly_mask[scored]
+        gt_anomaly = ground_truth.anomaly_mask[scored]
         true_positive = float(np.sum(gt_anomaly & pred_anomaly))
         false_positive = float(np.sum(~gt_anomaly & pred_anomaly))
         false_negative = float(np.sum(gt_anomaly & ~pred_anomaly))
