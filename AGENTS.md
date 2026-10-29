@@ -48,6 +48,8 @@
 - Ревьюер — инструкция в `.claude/agents/reviewer.md`; `.opencode/agents/reviewer.md` задаёт права
   и отсылает к ней. Вызывается только по команде пользователя.
 - Команды OpenCode (`.opencode/commands/`): `/check-app`, `/run-notebook`, `/new-detector`, `/report`, `/review`.
+- Текущая ревизия `notebooks/example_model.ipynb` — рабочий контекст, порядок действий, состояние и открытые
+  вопросы в `report/notebook_review.md`; при возобновлении работы читать первым, в конце шага — обновлять.
 - Принятые решения по методике и коду — раздел «Принятые решения» в `report/rewrite_plan.md`;
   каждое новое решение записывать туда сразу и опираться на них при правках.
 - Отчёт — скилл `report`; план переписывания по этапам — `report/rewrite_plan.md`;
