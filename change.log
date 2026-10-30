@@ -1,5 +1,5 @@
 
-## 2026-10-30 — DBSCAN: обоснование уровней квантилей ε
-notebooks/example_model.ipynb: markdown DBSCAN — обоснование уровней квантилей ε (0.5–0.999)
-report/Отчёт.tex: DBSCAN — обоснование уровней квантилей ε
-report/rewrite_plan.md: DBSCAN — обоснование границ уровней квантилей ε
+## 2026-10-30 — LOF: свойства модели
+notebooks/example_model.ipynb: markdown LOF — свойства модели: совпадающие признаки (риск принят), слабая зависимость от k
+report/Отчёт.tex: LOF — те же свойства модели
+report/rewrite_plan.md: LOF — свойства модели
