@@ -192,6 +192,8 @@
 		\item $F_1$\\
 		Гармоническое среднее точности и полноты.\\
 		$F_1=\dfrac{2TP}{2TP+FP+FN}$.
+		\item MCC\\
+		Коэффициент корреляции Мэттьюса по точкам с оценкой: учитывает все четыре ячейки таблицы сопряжённости, определение --- в разделе «Описание метрик». Используется при выборе порога и показывается в итоговых таблицах.
 	\end{enumerate}
 
 
@@ -825,25 +827,25 @@
 \scriptsize
 \setlength{\tabcolsep}{3pt}
 \caption{Сортировка: F1: df1 — доля обучения $\rho=0{,}6$ (тестовая выборка)}
-\begin{tabular}{lrrrrrrrrrrrr}
+\begin{tabular}{lrrrrrrrrrrrrr}
 \toprule
-Модель & RMSE, м & Max(d\_i), м & Distance loss, м & Delay median, с & Delay mean, с & Delay p95, с & Delay max, с & On-time episodes & Late/missed episodes & Precision & Recall & F1 \\
+Модель & RMSE, м & Max(d\_i), м & Distance loss, м & Delay median, с & Delay mean, с & Delay p95, с & Delay max, с & On-time episodes & Late/missed episodes & Precision & Recall & F1 & MCC \\
 \midrule
-MPCT & & & & & & & & & & & & \\
-One-Class SVM & & & & & & & & & & & & \\
-Isolation Forest & & & & & & & & & & & & \\
-Фильтр Калмана & & & & & & & & & & & & \\
-HMM & & & & & & & & & & & & \\
-DONUT & & & & & & & & & & & & \\
-LSTM-автоэнкодер & & & & & & & & & & & & \\
-Robust PCA & & & & & & & & & & & & \\
-GP-EKF & & & & & & & & & & & & \\
-TCN & & & & & & & & & & & & \\
-Gaussian process & & & & & & & & & & & & \\
-ARIMA(2,1,1) & & & & & & & & & & & & \\
-AR(p) & & & & & & & & & & & & \\
-LOF & & & & & & & & & & & & \\
-Hampel & & & & & & & & & & & & \\
+MPCT & & & & & & & & & & & & & \\
+One-Class SVM & & & & & & & & & & & & & \\
+Isolation Forest & & & & & & & & & & & & & \\
+Фильтр Калмана & & & & & & & & & & & & & \\
+HMM & & & & & & & & & & & & & \\
+DONUT & & & & & & & & & & & & & \\
+LSTM-автоэнкодер & & & & & & & & & & & & & \\
+Robust PCA & & & & & & & & & & & & & \\
+GP-EKF & & & & & & & & & & & & & \\
+TCN & & & & & & & & & & & & & \\
+Gaussian process & & & & & & & & & & & & & \\
+ARIMA(2,1,1) & & & & & & & & & & & & & \\
+AR(p) & & & & & & & & & & & & & \\
+LOF & & & & & & & & & & & & & \\
+Hampel & & & & & & & & & & & & & \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -853,25 +855,25 @@ Hampel & & & & & & & & & & & & \\
 \scriptsize
 \setlength{\tabcolsep}{3pt}
 \caption{Сортировка: F1: df2 — доля обучения $\rho=0{,}8$ (тестовая выборка)}
-\begin{tabular}{lrrrrrrrrrrrr}
+\begin{tabular}{lrrrrrrrrrrrrr}
 \toprule
-Модель & RMSE, м & Max(d\_i), м & Distance loss, м & Delay median, с & Delay mean, с & Delay p95, с & Delay max, с & On-time episodes & Late/missed episodes & Precision & Recall & F1 \\
+Модель & RMSE, м & Max(d\_i), м & Distance loss, м & Delay median, с & Delay mean, с & Delay p95, с & Delay max, с & On-time episodes & Late/missed episodes & Precision & Recall & F1 & MCC \\
 \midrule
-MPCT & & & & & & & & & & & & \\
-Isolation Forest & & & & & & & & & & & & \\
-One-Class SVM & & & & & & & & & & & & \\
-Фильтр Калмана & & & & & & & & & & & & \\
-HMM & & & & & & & & & & & & \\
-Robust PCA & & & & & & & & & & & & \\
-DONUT & & & & & & & & & & & & \\
-GP-EKF & & & & & & & & & & & & \\
-LSTM-автоэнкодер & & & & & & & & & & & & \\
-TCN & & & & & & & & & & & & \\
-AR(p) & & & & & & & & & & & & \\
-ARIMA(2,1,1) & & & & & & & & & & & & \\
-LOF & & & & & & & & & & & & \\
-Hampel & & & & & & & & & & & & \\
-Gaussian process & & & & & & & & & & & & \\
+MPCT & & & & & & & & & & & & & \\
+Isolation Forest & & & & & & & & & & & & & \\
+One-Class SVM & & & & & & & & & & & & & \\
+Фильтр Калмана & & & & & & & & & & & & & \\
+HMM & & & & & & & & & & & & & \\
+Robust PCA & & & & & & & & & & & & & \\
+DONUT & & & & & & & & & & & & & \\
+GP-EKF & & & & & & & & & & & & & \\
+LSTM-автоэнкодер & & & & & & & & & & & & & \\
+TCN & & & & & & & & & & & & & \\
+AR(p) & & & & & & & & & & & & & \\
+ARIMA(2,1,1) & & & & & & & & & & & & & \\
+LOF & & & & & & & & & & & & & \\
+Hampel & & & & & & & & & & & & & \\
+Gaussian process & & & & & & & & & & & & & \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -882,25 +884,25 @@ Gaussian process & & & & & & & & & & & & \\
 \scriptsize
 \setlength{\tabcolsep}{3pt}
 \caption{Сортировка: Distance loss: df1 — доля обучения $\rho=0{,}6$ (тестовая выборка)}
-\begin{tabular}{lrrrrrrrrrrrr}
+\begin{tabular}{lrrrrrrrrrrrrr}
 \toprule
-Модель & RMSE, м & Max(d\_i), м & Distance loss, м & Delay median, с & Delay mean, с & Delay p95, с & Delay max, с & On-time episodes & Late/missed episodes & Precision & Recall & F1 \\
+Модель & RMSE, м & Max(d\_i), м & Distance loss, м & Delay median, с & Delay mean, с & Delay p95, с & Delay max, с & On-time episodes & Late/missed episodes & Precision & Recall & F1 & MCC \\
 \midrule
-MPCT & & & & & & & & & & & & \\
-Фильтр Калмана & & & & & & & & & & & & \\
-Isolation Forest & & & & & & & & & & & & \\
-GP-EKF & & & & & & & & & & & & \\
-AR(p) & & & & & & & & & & & & \\
-One-Class SVM & & & & & & & & & & & & \\
-HMM & & & & & & & & & & & & \\
-ARIMA(2,1,1) & & & & & & & & & & & & \\
-Gaussian process & & & & & & & & & & & & \\
-LOF & & & & & & & & & & & & \\
-Hampel & & & & & & & & & & & & \\
-LSTM-автоэнкодер & & & & & & & & & & & & \\
-DONUT & & & & & & & & & & & & \\
-TCN & & & & & & & & & & & & \\
-Robust PCA & & & & & & & & & & & & \\
+MPCT & & & & & & & & & & & & & \\
+Фильтр Калмана & & & & & & & & & & & & & \\
+Isolation Forest & & & & & & & & & & & & & \\
+GP-EKF & & & & & & & & & & & & & \\
+AR(p) & & & & & & & & & & & & & \\
+One-Class SVM & & & & & & & & & & & & & \\
+HMM & & & & & & & & & & & & & \\
+ARIMA(2,1,1) & & & & & & & & & & & & & \\
+Gaussian process & & & & & & & & & & & & & \\
+LOF & & & & & & & & & & & & & \\
+Hampel & & & & & & & & & & & & & \\
+LSTM-автоэнкодер & & & & & & & & & & & & & \\
+DONUT & & & & & & & & & & & & & \\
+TCN & & & & & & & & & & & & & \\
+Robust PCA & & & & & & & & & & & & & \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -910,25 +912,25 @@ Robust PCA & & & & & & & & & & & & \\
 \scriptsize
 \setlength{\tabcolsep}{3pt}
 \caption{Сортировка: Distance loss: df2 — доля обучения $\rho=0{,}8$ (тестовая выборка)}
-\begin{tabular}{lrrrrrrrrrrrr}
+\begin{tabular}{lrrrrrrrrrrrrr}
 \toprule
-Модель & RMSE, м & Max(d\_i), м & Distance loss, м & Delay median, с & Delay mean, с & Delay p95, с & Delay max, с & On-time episodes & Late/missed episodes & Precision & Recall & F1 \\
+Модель & RMSE, м & Max(d\_i), м & Distance loss, м & Delay median, с & Delay mean, с & Delay p95, с & Delay max, с & On-time episodes & Late/missed episodes & Precision & Recall & F1 & MCC \\
 \midrule
-MPCT & & & & & & & & & & & & \\
-Isolation Forest & & & & & & & & & & & & \\
-Фильтр Калмана & & & & & & & & & & & & \\
-One-Class SVM & & & & & & & & & & & & \\
-GP-EKF & & & & & & & & & & & & \\
-HMM & & & & & & & & & & & & \\
-AR(p) & & & & & & & & & & & & \\
-ARIMA(2,1,1) & & & & & & & & & & & & \\
-LOF & & & & & & & & & & & & \\
-LSTM-автоэнкодер & & & & & & & & & & & & \\
-Hampel & & & & & & & & & & & & \\
-DONUT & & & & & & & & & & & & \\
-Gaussian process & & & & & & & & & & & & \\
-TCN & & & & & & & & & & & & \\
-Robust PCA & & & & & & & & & & & & \\
+MPCT & & & & & & & & & & & & & \\
+Isolation Forest & & & & & & & & & & & & & \\
+Фильтр Калмана & & & & & & & & & & & & & \\
+One-Class SVM & & & & & & & & & & & & & \\
+GP-EKF & & & & & & & & & & & & & \\
+HMM & & & & & & & & & & & & & \\
+AR(p) & & & & & & & & & & & & & \\
+ARIMA(2,1,1) & & & & & & & & & & & & & \\
+LOF & & & & & & & & & & & & & \\
+LSTM-автоэнкодер & & & & & & & & & & & & & \\
+Hampel & & & & & & & & & & & & & \\
+DONUT & & & & & & & & & & & & & \\
+Gaussian process & & & & & & & & & & & & & \\
+TCN & & & & & & & & & & & & & \\
+Robust PCA & & & & & & & & & & & & & \\
 \bottomrule
 \end{tabular}
 \end{table}

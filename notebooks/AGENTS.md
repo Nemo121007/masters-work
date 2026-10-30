@@ -45,7 +45,7 @@
 - Гео: `rmse_m`, `max_deviation_m`, `distance_loss_m`
 - Время: `delay_median`, `delay_mean`, `delay_p95`, `delay_max`,
   `delay_n_on_time`, `delay_n_late_or_missed`
-- Классификация: `precision`, `recall`, `f1`
+- Классификация: `precision`, `recall`, `f1`, `mcc`
 - Покрытие (доли, в таблице — %): `unscored_share`, `unscored_anomaly_share`,
   `anomaly_unscored_share`
 
@@ -56,7 +56,7 @@
 `select_anomaly_threshold` и `_threshold_record` исключают такие точки из MCC
 и из ломаной операционного DL. Правила — `report/rewrite_plan.md`,
 «Принятые решения». В итоговых таблицах
-test не показывать: MCC, DLR, train-метрики, порог, время, heatmap метрик.
+test не показывать: DLR, train-метрики, порог, время, heatmap метрик (MCC на test показывается — решение 2026-10-30).
 MCC, operational DL и подобранный порог выводятся в `print` при подборе
 порога на train.
 
