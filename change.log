@@ -1,15 +1,13 @@
 
-## 2026-10-30 — LOF: разбор
-report/notebook_review.md: разбор LOF — проблемы, варианты постановки
-report/rewrite_plan.md: LOF — постановка A (novelty, признаки как у DBSCAN, общая сетка порога)
-report/rewrite_plan.md: LOF — k подбирается вместе с порогом из {10, 20, 35, 50}
-notebooks/example_model.ipynb: markdown-ячейка «LOF» переписана по принятым решениям; код пока не изменён
-report/glossary.md: обозначения k, N_k, d_k, rd_k, lrd_k, LOF_k; термины «обнаружение новизны», «расстояние достижимости», «локальная плотность достижимости»
-notebooks/example_model.ipynb: код LOF по принятым решениям — обнаружение новизны по штатному ходу обучающей выборки (свой расчёт LOF с исключением самой точки), признаки и точки без оценки как у DBSCAN, два прохода (пересчёт только изменённых точек), совместный подбор k и порога по общей сетке; удалены прежние функции, пересчёт на тесте и кандидаты 1.5, 2.0
-notebooks/checks/verify_lof.py: проверочный скрипт LOF (эталон sklearn для точек обучения и novelty, точки без оценки, курс, выброс, синтетика с аномалиями)
-report/notebook_review.md: результаты проверок LOF
+## 2026-10-30 — Isolation Forest: разбор
+report/notebook_review.md: разбор Isolation Forest — проблемы, варианты постановки
+report/rewrite_plan.md: Isolation Forest — постановка A (обучение на штатном ходу, признаки как у DBSCAN и LOF, канонический порог 0.5)
+notebooks/example_model.ipynb: markdown-ячейка «Isolation Forest» переписана по принятым решениям; код пока не изменён
+report/glossary.md: обозначения n_sub, h̄, c(n), H(n)
+notebooks/example_model.ipynb: код Isolation Forest по принятым решениям — лес на штатном ходу обучающей выборки, признаки, точки без оценки и второй проход как у DBSCAN, оценка статьи 2^(-h̄/c), порог — общая сетка плюс 0.5
+notebooks/checks/verify_isolation_forest.py: проверочный скрипт Isolation Forest
+report/notebook_review.md: результаты проверок Isolation Forest
 
-## 2026-10-30 — LOF: отчёт
-report/Отчёт.tex: раздел «LOF» заменён разделом «Local Outlier Factor (LOF)» по markdown-ячейке
-report/rewrite_plan.md: пункты 1.4 и 3.1 — LOF исправлен
-report/notebook_review.md: LOF готово
+## 2026-10-30 — Isolation Forest: отчёт
+report/Отчёт.tex: раздел «Isolation Forest» по markdown-ячейке
+report/notebook_review.md: Isolation Forest готово
