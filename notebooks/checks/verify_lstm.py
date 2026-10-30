@@ -46,7 +46,7 @@ xy, t = simulate(2000, 0.02, 5.0, 1)
 f = frame_of(xy, t, "move")
 model = fit_lstm_on_train(f)
 print(f"обучение: окон {model['n_train']}, калибровочных {model['n_calib']}, эпох {model['epochs']}, ошибка калибровки {model['calib_loss']:.4g}")
-check("ранняя остановка: эпох ≤ 50, ошибка калибровки конечна", model["epochs"] <= LSTM_MAX_EPOCHS and np.isfinite(model["calib_loss"]))
+check("ранняя остановка: эпох ≤ 50, ошибка калибровки конечна", model["epochs"] <= NN_MAX_EPOCHS and np.isfinite(model["calib_loss"]))
 m2 = fit_lstm_on_train(f)
 s, r, first = lstm_detect(f, model, np.array([np.inf]))
 s2, _, _ = lstm_detect(f, m2, np.array([np.inf]))
@@ -54,7 +54,7 @@ check("воспроизводимость (фиксированный seed)", np
 idx, fst = dbscan_segments(f, np.ones(len(f), dtype=bool))
 fe = dbscan_features(xy[idx], t[idx], np.where(fst, -1, np.arange(len(idx)) - 1))
 st = rpca_window_starts(fst, ~np.isnan(fe[:, 0]), LSTM_WINDOW)
-calib = st[int(len(st) * (1 - LSTM_CALIB_FRACTION)):]
+calib = st[int(len(st) * (1 - NN_CALIB_FRACTION)):]
 fit_all = st[st + LSTM_WINDOW <= calib[0]]
 check("калибровочные окна не пересекаются с обучающими", fit_all.max() + LSTM_WINDOW <= calib.min(), f"конец обучающих {fit_all.max() + LSTM_WINDOW}, начало калибровочных {calib.min()}")
 med = np.nanmedian(s[0])

@@ -1,5 +1,6 @@
 
-## 2026-10-30 — HMM: свойство модели
-notebooks/example_model.ipynb: markdown HMM — свойство модели: после одиночного выброса несколько следующих точек размечаются аномалией
-report/Отчёт.tex: HMM — то же свойство модели
-report/rewrite_plan.md: HMM — свойство модели
+## 2026-10-30 — Обучение нейросетей: ранняя остановка
+notebooks/example_model.ipynb: общая функция train_with_early_stopping (до 300 эпох, терпение 10, минимальное улучшение 1e-4, ReduceLROnPlateau, предупреждение при лимите) в общей ячейке, константы NN_* в общих гиперпараметрах, N_EPOCHS и LSTM_MAX_EPOCHS, LSTM_PATIENCE, LSTM_CALIB_FRACTION удалены; LSTM, TCN, DONUT обучаются через неё; markdown LSTM — правило обучения
+report/Отчёт.tex: LSTM — правило обучения
+report/rewrite_plan.md: решение об обучении нейросетей
+notebooks/checks/verify_lstm.py, verify_tcn.py, verify_donut.py: константы NN_*
