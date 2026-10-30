@@ -1,5 +1,16 @@
 
-## 2026-10-30 — LOF: свойства модели
-notebooks/example_model.ipynb: markdown LOF — свойства модели: совпадающие признаки (риск принят), слабая зависимость от k
-report/Отчёт.tex: LOF — те же свойства модели
-report/rewrite_plan.md: LOF — свойства модели
+## 2026-10-30 — One-Class SVM: разбор
+report/notebook_review.md: разбор One-Class SVM — проблемы, варианты постановки
+report/rewrite_plan.md: One-Class SVM — постановка A, обучение на всех точках штатного хода
+report/rewrite_plan.md: One-Class SVM — ν = 0.1, γ = scale без подбора
+notebooks/example_model.ipynb: markdown-ячейка «One-Class SVM» переписана по принятым решениям; код пока не изменён
+report/glossary.md: обозначения ν, γ, f, α_j, ρ, K; термин «опорный вектор» (One-Class SVM)
+notebooks/example_model.ipynb: код One-Class SVM по принятым решениям — обучение на всех точках штатного хода, признаки, точки без оценки и второй проход как у DBSCAN, ν 0.1, γ scale, порог — общая сетка плюс 0; из общей ячейки удалены ставшие неиспользуемыми isolation_forest_robust_features и dbscan_density_matrix
+notebooks/checks/verify_ocsvm.py: проверочный скрипт One-Class SVM
+report/notebook_review.md: результаты проверок One-Class SVM
+
+## 2026-10-30 — One-Class SVM: свойство и отчёт
+notebooks/example_model.ipynb: markdown One-Class SVM — свойство модели: насыщение оценки на ρ
+report/Отчёт.tex: раздел «One-Class SVM» по markdown-ячейке
+report/rewrite_plan.md: One-Class SVM — свойство модели; пункт 3.1 — One-Class SVM исправлен
+report/notebook_review.md: One-Class SVM готово
