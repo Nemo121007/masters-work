@@ -1,17 +1,15 @@
 
-## 2026-10-30 — DBSCAN: разбор
-report/notebook_review.md: разбор DBSCAN — проблемы, варианты постановки
-report/rewrite_plan.md: DBSCAN — постановка A (обучение на штатном ходу, отнесение к опорным точкам)
-report/notebook_review.md: состояние DBSCAN
-report/rewrite_plan.md: DBSCAN — признаки (скорость, продольное и поперечное ускорение)
-report/rewrite_plan.md: DBSCAN — ε и MinPts, обучение по штатному ходу, два прохода
-notebooks/example_model.ipynb: markdown-ячейка «DBSCAN» переписана по принятым решениям; код пока не изменён
-report/glossary.md: обозначения a^long, a^lat, ε, MinPts, C_ε; термин «ядровая точка»
-notebooks/example_model.ipynb: код DBSCAN по принятым решениям — признаки (v, a_long, a_lat) по последней принятой точке, нормировка и ядровые точки по штатному ходу обучающей выборки, отнесение к ядровым точкам вместо перекластеризации теста, два прохода, ε из 30 квантилей, MinPts 6, точки без оценки
-notebooks/checks/verify_dbscan.py: проверочный скрипт DBSCAN
-report/notebook_review.md: результаты проверок DBSCAN
+## 2026-10-30 — LOF: разбор
+report/notebook_review.md: разбор LOF — проблемы, варианты постановки
+report/rewrite_plan.md: LOF — постановка A (novelty, признаки как у DBSCAN, общая сетка порога)
+report/rewrite_plan.md: LOF — k подбирается вместе с порогом из {10, 20, 35, 50}
+notebooks/example_model.ipynb: markdown-ячейка «LOF» переписана по принятым решениям; код пока не изменён
+report/glossary.md: обозначения k, N_k, d_k, rd_k, lrd_k, LOF_k; термины «обнаружение новизны», «расстояние достижимости», «локальная плотность достижимости»
+notebooks/example_model.ipynb: код LOF по принятым решениям — обнаружение новизны по штатному ходу обучающей выборки (свой расчёт LOF с исключением самой точки), признаки и точки без оценки как у DBSCAN, два прохода (пересчёт только изменённых точек), совместный подбор k и порога по общей сетке; удалены прежние функции, пересчёт на тесте и кандидаты 1.5, 2.0
+notebooks/checks/verify_lof.py: проверочный скрипт LOF (эталон sklearn для точек обучения и novelty, точки без оценки, курс, выброс, синтетика с аномалиями)
+report/notebook_review.md: результаты проверок LOF
 
-## 2026-10-30 — DBSCAN: очистка и отчёт
-notebooks/example_model.ipynb: из общей ячейки удалены неиспользуемые dbscan_robust_features и dbscan_isolation_scores
-report/Отчёт.tex: раздел «DBSCAN» по markdown-ячейке
-report/rewrite_plan.md: пункты 1.4 и 3.1 — DBSCAN исправлен
+## 2026-10-30 — LOF: отчёт
+report/Отчёт.tex: раздел «LOF» заменён разделом «Local Outlier Factor (LOF)» по markdown-ячейке
+report/rewrite_plan.md: пункты 1.4 и 3.1 — LOF исправлен
+report/notebook_review.md: LOF готово
