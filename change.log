@@ -61,3 +61,8 @@ notebooks/example_model.ipynb: dbscan_segments, dbscan_features и rpca_window_s
 notebooks/checks/verify_dbscan.py, verify_lof.py: эталоны DBSCAN и LocalOutlierFactor импортируются в тесте; облегчённый режим в verify_dbscan, verify_lof, verify_isolation_forest, verify_ocsvm
 report/Отчёт.tex: механические исправления оформления — $$ → \[ \] в разделе предобработки, десятичная точка в ρ, «с» вместо «сек.»
 report/notebook_review.md: результаты просмотра блокнота и отчёта — исправленное и вопросы
+
+## 2026-10-30 — HMM: исправления по тестам
+notebooks/example_model.ipynb: HMM — нижняя граница 1e-6 начальных и переходных вероятностей (отрезок, начинающийся в режиме аномалии, получал вероятность 0); исправлена двойная нормировка ξ (compute_log_xi_sum уже нормирует — параметры EM становились NaN)
+report/Отчёт.tex: раздел «Скрытая марковская модель (HMM)» по markdown-ячейке
+report/notebook_review.md: результаты проверок HMM
