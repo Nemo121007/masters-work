@@ -1,13 +1,5 @@
 
-## 2026-10-30 — Isolation Forest: разбор
-report/notebook_review.md: разбор Isolation Forest — проблемы, варианты постановки
-report/rewrite_plan.md: Isolation Forest — постановка A (обучение на штатном ходу, признаки как у DBSCAN и LOF, канонический порог 0.5)
-notebooks/example_model.ipynb: markdown-ячейка «Isolation Forest» переписана по принятым решениям; код пока не изменён
-report/glossary.md: обозначения n_sub, h̄, c(n), H(n)
-notebooks/example_model.ipynb: код Isolation Forest по принятым решениям — лес на штатном ходу обучающей выборки, признаки, точки без оценки и второй проход как у DBSCAN, оценка статьи 2^(-h̄/c), порог — общая сетка плюс 0.5
-notebooks/checks/verify_isolation_forest.py: проверочный скрипт Isolation Forest
-report/notebook_review.md: результаты проверок Isolation Forest
-
-## 2026-10-30 — Isolation Forest: отчёт
-report/Отчёт.tex: раздел «Isolation Forest» по markdown-ячейке
-report/notebook_review.md: Isolation Forest готово
+## 2026-10-30 — DBSCAN: обоснование уровней квантилей ε
+notebooks/example_model.ipynb: markdown DBSCAN — обоснование уровней квантилей ε (0.5–0.999)
+report/Отчёт.tex: DBSCAN — обоснование уровней квантилей ε
+report/rewrite_plan.md: DBSCAN — обоснование границ уровней квантилей ε
