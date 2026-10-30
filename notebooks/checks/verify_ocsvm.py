@@ -12,6 +12,15 @@ with contextlib.redirect_stdout(io.StringIO()):
     # Функции признаков DBSCAN без эксперимента DBSCAN.
     src = "".join(cells["dbscan-code-cell"]["source"])
     assert shell.run_cell(src[: src.index("dbscan_scenarios = (")]).success
+# Облегчённый режим: проверка правильности, а не качества — меньше данных test.csv и кандидатов порога.
+assert shell.run_cell(r"""
+_threshold_candidates_full = threshold_candidates
+def threshold_candidates(scores, n_quantiles=20, n_log=10):
+    return _threshold_candidates_full(scores, n_quantiles, n_log)
+for _bundle in (df1, df2):
+    _bundle["train"] = _bundle["train"].iloc[-2000:].reset_index(drop=True)
+    _bundle["test"] = _bundle["test"].iloc[:1000].reset_index(drop=True)
+""").success
 started = time.perf_counter()
 result = shell.run_cell("".join(cells["ocsvm-code-cell"]["source"]))
 print(f"######## ocsvm-code-cell: {time.perf_counter() - started:.1f} s, {'ok' if result.success else 'FAIL'}", flush=True)

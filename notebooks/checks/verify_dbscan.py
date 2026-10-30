@@ -9,11 +9,21 @@ shell = _make_shell(PROJECT_ROOT)
 with contextlib.redirect_stdout(io.StringIO()):
     for cid in ids:
         assert shell.run_cell("".join(cells[cid]["source"])).success, cid
+# Облегчённый режим: проверка правильности, а не качества — меньше данных test.csv и кандидатов порога.
+assert shell.run_cell(r"""
+_threshold_candidates_full = threshold_candidates
+def threshold_candidates(scores, n_quantiles=20, n_log=10):
+    return _threshold_candidates_full(scores, n_quantiles, n_log)
+for _bundle in (df1, df2):
+    _bundle["train"] = _bundle["train"].iloc[-2000:].reset_index(drop=True)
+    _bundle["test"] = _bundle["test"].iloc[:1000].reset_index(drop=True)
+""").success
 started = time.perf_counter()
 result = shell.run_cell("".join(cells["dbscan-code-cell"]["source"]))
 print(f"######## dbscan-code-cell: {time.perf_counter() - started:.1f} s, {'ok' if result.success else 'FAIL'}", flush=True)
 shell.run_cell(r'''
 import warnings; warnings.filterwarnings("ignore")
+from sklearn.cluster import DBSCAN
 def frame_of(xy, t, label):
     return pd.DataFrame({"time": pd.to_datetime(t, unit="s"), "x": xy[:, 0], "n": xy[:, 1], "y": label, "lat": 44.0, "lon": 132.0})
 def check(name, ok, detail=""):

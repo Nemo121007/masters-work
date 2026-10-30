@@ -1,16 +1,63 @@
 
-## 2026-10-30 — One-Class SVM: разбор
-report/notebook_review.md: разбор One-Class SVM — проблемы, варианты постановки
-report/rewrite_plan.md: One-Class SVM — постановка A, обучение на всех точках штатного хода
-report/rewrite_plan.md: One-Class SVM — ν = 0.1, γ = scale без подбора
-notebooks/example_model.ipynb: markdown-ячейка «One-Class SVM» переписана по принятым решениям; код пока не изменён
-report/glossary.md: обозначения ν, γ, f, α_j, ρ, K; термин «опорный вектор» (One-Class SVM)
-notebooks/example_model.ipynb: код One-Class SVM по принятым решениям — обучение на всех точках штатного хода, признаки, точки без оценки и второй проход как у DBSCAN, ν 0.1, γ scale, порог — общая сетка плюс 0; из общей ячейки удалены ставшие неиспользуемыми isolation_forest_robust_features и dbscan_density_matrix
-notebooks/checks/verify_ocsvm.py: проверочный скрипт One-Class SVM
-report/notebook_review.md: результаты проверок One-Class SVM
+## 2026-10-30 — Robust PCA: разбор
+report/notebook_review.md: разбор Robust PCA — проблемы, варианты постановки
+report/rewrite_plan.md: Robust PCA — постановка A (подпространство по штатному ходу, разреженный остаток проекции)
+report/rewrite_plan.md: Robust PCA — детали (PCP на окнах штатного хода, ℓ1-проекция, окна, второй проход)
+notebooks/example_model.ipynb: markdown-ячейка «Robust PCA» переписана по принятым решениям; код пока не изменён
+report/glossary.md: обозначения n_W, x_W, X = L + S, U, s_W, ядерная норма
+notebooks/example_model.ipynb: код Robust PCA по принятым решениям — PCP до сходимости на окнах штатного хода обучающей выборки, базис по L, ℓ1-остаток проекции (IRLS) для окон любой выборки, окна 16 точек с шагом 1 внутри отрезка, оценка точки — максимум по окнам, точки без оценки, второй проход (пересчёт изменённых окон), общая сетка порога; удалены прежние функции, переразложение теста и нулевая оценка вне окон
+notebooks/checks/verify_rpca.py: проверочный скрипт Robust PCA
+report/notebook_review.md: разбор LSTM-автоэнкодера — проблемы, варианты постановки
+report/rewrite_plan.md: LSTM-автоэнкодер — постановка A
+report/rewrite_plan.md: LSTM-автоэнкодер — детали (минимум по окнам, калибровка, сеть и обучение)
+notebooks/example_model.ipynb: markdown-ячейка «LSTM-автоэнкодер» переписана по принятым решениям; код пока не изменён
+report/glossary.md: обозначения x̂_W, e_W, d_W, μ_pk, σ²_pk
+notebooks/example_model.ipynb: код LSTM-автоэнкодера по принятым решениям — признаки (v, a_long, a_lat), окна как у Robust PCA, калибровка на последних 15% окон по времени без пересечения, скрытое состояние 32, до 50 эпох с ранней остановкой, фиксированный seed, оценка точки — минимум по окнам нормированной ошибки её признаков, второй проход (пересчёт изменённых окон), общая сетка порога
+notebooks/checks/verify_lstm.py: проверочный скрипт LSTM-автоэнкодера
+report/notebook_review.md: разбор TCN — проблемы, варианты постановки
+report/rewrite_plan.md: TCN — постановка A (прогноз признаков следующей точки)
+report/rewrite_plan.md: TCN — детали (история 15, 32 канала, оценка, точки без оценки, обучение как у LSTM)
+notebooks/example_model.ipynb: Robust PCA — остаток окна точно, линейным программированием; остатки первого прохода считаются один раз на выборку; импорт linprog
+report/rewrite_plan.md: Robust PCA — решение о расчёте остатка линейным программированием
+notebooks/example_model.ipynb: TCN по принятым решениям — markdown переписан (на проверке); код: прогноз признаков следующей точки по 15 принятым точкам, 32 канала, обучение и калибровка как у LSTM, точки без оценки, второй проход (история из принятых точек), общая сетка порога
+notebooks/checks/verify_tcn.py: проверочный скрипт TCN
+report/glossary.md: обозначения g, û_i, μ_k, σ²_k (TCN)
+report/notebook_review.md: разбор DONUT — проблемы, варианты постановки
+report/rewrite_plan.md: DONUT — постановка A (по статье: M-ELBO, вероятность реконструкции последней точки)
+report/notebook_review.md: результаты проверок TCN
+report/rewrite_plan.md: DONUT — детали (сеть, M-ELBO, оценка, обучение)
+notebooks/example_model.ipynb: markdown-ячейка «DONUT» переписана по принятым решениям; код пока не изменён
+report/glossary.md: обозначения z, q, μ_j, σ_j, μ_q, σ_q, α_j, β, 𝓛, L; термины «M-ELBO», «вероятность восстановления»
+report/Отчёт.tex: раздел «Temporal Convolutional Network (TCN)» по markdown-ячейке
+report/notebook_review.md: TCN готово, коммит вместе с Robust PCA и LSTM
+notebooks/example_model.ipynb: код DONUT по принятым решениям — VAE (два слоя по 100, z размерности 8, обучаемое СКО наблюдения), M-ELBO на всех окнах обучающей выборки с весами α и 1% пропусков, признаки при обучении по последней точке штатного хода, оценка — минус вероятность восстановления последней точки по 100 фиксированным выборкам, окно и второй проход как у TCN, ранняя остановка, общая сетка порога; Pyro больше не используется
+notebooks/checks/verify_donut.py: проверочный скрипт DONUT
+report/notebook_review.md: разбор STGVAD — проблемы, варианты постановки
+notebooks/example_model.ipynb: STGVAD исключён из сравнения — код удалён, убран из общей сводки, markdown заменён записью об исключении
+report/Отчёт.tex: раздел STGVAD заменён записью об исключении
+report/rewrite_plan.md: STGVAD — решение об исключении; пункт 3.3 (утечка цели) снят
+report/notebook_review.md: состояние STGVAD
+report/notebook_review.md: разбор HMM — проблемы, варианты постановки
+report/rewrite_plan.md: HMM — постановка A (одна HMM с переключением классов)
+report/rewrite_plan.md: HMM — детали (состояния, EM, разметка, начало отрезка, оценка, второй проход)
+notebooks/example_model.ipynb: markdown-ячейка «HMM» переписана по принятым решениям; код пока не изменён
+report/glossary.md: обозначения S_i, 𝒮_move, 𝒮_anom, π_k, T_jk, m_k, D_k, f_i(k) (HMM)
+notebooks/checks/verify_hmm.py: проверочный скрипт HMM
+notebooks/example_model.ipynb: код HMM по принятым решениям — одна HMM с режимами штатного хода и аномалии, EM с запретом режимов чужого класса (hmmlearn _hmmc), 5 запусков до сходимости, фильтр — апостериорная вероятность аномалии, точки без оценки, второй проход, общая сетка плюс 0.5; импорт hmmlearn._hmmc вместо GaussianHMM
+report/notebook_review.md: порядок последовательных тестов
+notebooks/checks/verify_rpca.py, verify_lstm.py, verify_donut.py, verify_hmm.py: облегчённый режим — test.csv обрезан (2000/1000 точек), 30 кандидатов порога, синтетика 2000–2500 точек
+report/notebook_review.md: разбор MPCT — проблемы, варианты постановки
+report/rewrite_plan.md: MPCT — постановка A (самая длинная физически согласованная подпоследовательность)
+report/rewrite_plan.md: MPCT — детали (ENU как у всех моделей, перезапуск цепочки, сетка v_+, бинарное решение)
+notebooks/example_model.ipynb: markdown-ячейка «MPCT» переписана по принятым решениям; код пока не изменён
+report/glossary.md: обозначения v_+, p_i, i_1…i_m; термин «якорь» — прежний вариант MPCT
+notebooks/checks/verify_rpca.py: вызов select_rpca_threshold и rpca_detect с первым проходом (новая сигнатура)
+report/notebook_review.md: результаты проверок Robust PCA
+notebooks/example_model.ipynb: код MPCT по принятым решениям — самая длинная допустимая подпоследовательность (ДП, окно 180 с, перезапуск цепочки), ENU, сетка v_+ из 30 значений, бинарное решение, без индекса формы
+notebooks/checks/verify_mpct.py: проверочный скрипт MPCT (ДП = полный перебор, ловушка якоря, выброс, эпизоды, разрыв, курс)
 
-## 2026-10-30 — One-Class SVM: свойство и отчёт
-notebooks/example_model.ipynb: markdown One-Class SVM — свойство модели: насыщение оценки на ρ
-report/Отчёт.tex: раздел «One-Class SVM» по markdown-ячейке
-report/rewrite_plan.md: One-Class SVM — свойство модели; пункт 3.1 — One-Class SVM исправлен
-report/notebook_review.md: One-Class SVM готово
+## 2026-10-30 — Блокнот: порядок ячеек и очистка
+notebooks/example_model.ipynb: dbscan_segments, dbscan_features и rpca_window_starts перенесены в общую ячейку (используются несколькими моделями; HMM стоит раньше DBSCAN — при прогоне сверху вниз был NameError); удалены неиспользуемые enu_step_components, incoming_velocity_enu, track_shape_index, scatter_window_max, split_window_starts, relative_xy_km_windows, diagonal_mahalanobis, train_torch_autoencoder, select_anomaly_threshold; удалены неиспользуемые импорты pyro, SVI, Trace_ELBO, PyroOptim, DBSCAN, LocalOutlierFactor, torch.distributions; исправлена посторонняя вставка в константе MPCT_GRID_SIZE
+notebooks/checks/verify_dbscan.py, verify_lof.py: эталоны DBSCAN и LocalOutlierFactor импортируются в тесте; облегчённый режим в verify_dbscan, verify_lof, verify_isolation_forest, verify_ocsvm
+report/Отчёт.tex: механические исправления оформления — $$ → \[ \] в разделе предобработки, десятичная точка в ρ, «с» вместо «сек.»
+report/notebook_review.md: результаты просмотра блокнота и отчёта — исправленное и вопросы
