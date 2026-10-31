@@ -36,17 +36,21 @@ def simulate(count, sigma_acc, sigma_meas, seed, gaps=True):
         pos = pos + vel * d + 0.5 * acc * d * d; vel = vel + acc * d; out.append(pos.copy())
     return np.array(out) + r.normal(0.0, sigma_meas, (count, 2)), np.cumsum(dt)
 def valid(xy, t, idx, v):
-    return all(t[b] - t[a] > TIME_GAP_SEC or np.hypot(*(xy[b] - xy[a])) / (t[b] - t[a]) <= v for a, b in zip(idx[:-1], idx[1:]))
+    return all(np.hypot(*(xy[b] - xy[a])) / (t[b] - t[a]) <= v for a, b in zip(idx[:-1], idx[1:]))
 
-r = np.random.default_rng(0); worst = 0; bad_valid = 0
+r = np.random.default_rng(0); worst = 0; worst_long = 0; bad_valid = 0
 for trial in range(150):
     n = int(r.integers(4, 13)); t = np.cumsum(r.choice([10.0, 10.0, 60.0, 200.0], n)); xy = np.cumsum(r.normal(0, 60, (n, 2)), axis=0)
     v = float(r.uniform(2, 10))
     chosen = mpct_select_points(xy, t, np.array([v]))[0]; idx = np.flatnonzero(chosen)
     bad_valid += not valid(xy, t, idx, v)
     opt = max(k for k in range(1, n + 1) if any(valid(xy, t, list(c), v) for c in itertools.combinations(range(n), k)))
-    worst = max(worst, opt - len(idx))
-check("ДП = полный перебор (150 случайных отрезков до 12 точек)", worst == 0 and bad_valid == 0, f"недобор {worst}, недопустимых решений {bad_valid}")
+    if np.any(np.diff(t) > TIME_GAP_SEC):
+        worst_long = max(worst_long, opt - len(idx))
+    else:
+        worst = max(worst, opt - len(idx))
+check("ДП = полный перебор (150 случайных отрезков до 12 точек, паузы ≤ 180 с)", worst == 0 and bad_valid == 0,
+      f"недобор {worst}, недопустимых решений {bad_valid}; с паузами > 180 с наибольший недобор {worst_long} (приближение)")
 
 xy, t = simulate(2000, 0.02, 5.0, 1, gaps=False)
 f = frame_of(xy, t, "move")
@@ -68,6 +72,11 @@ check("смещённый эпизод 100 с отвергнут целиком,
 xy4 = xy.copy(); xy4[1300:1330] += 2000.0
 rej4, _ = mpct_detect(frame_of(xy4, t, "move"), np.array([v]))
 print(f"смещённый эпизод 300 с (30 точек): отвергнуто внутри {int(rej4[0, 1300:1330].sum())}, снаружи рядом {int(rej4[0, 1280:1300].sum() + rej4[0, 1330:1350].sum())} (свойство модели)")
+xy8 = xy.copy(); xy8[1600:1660] += 50_000.0
+rej8, _ = mpct_detect(frame_of(xy8, t, "move"), np.array([v]))
+check("смещённый эпизод 50 км, 600 с: отвергнут целиком, соседи приняты",
+      rej8[0, 1600:1660].all() and not rej8[0, 1590:1600].any() and not rej8[0, 1660:1670].any(),
+      f"отвергнуто внутри {int(rej8[0, 1600:1660].sum())} из 60, снаружи рядом {int(rej8[0, 1590:1600].sum() + rej8[0, 1660:1670].sum())}")
 t5 = t.copy(); t5[1500] = t5[1499]
 _, sc5 = mpct_detect(frame_of(xy, t5, "move"), np.array([v]))
 check("совпадающее время — без решения", not sc5[1500] and sc5[1499] and sc5[1501])
