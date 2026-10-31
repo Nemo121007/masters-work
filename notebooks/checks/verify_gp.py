@@ -17,7 +17,7 @@ import warnings; warnings.filterwarnings("ignore")
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import ConstantKernel, DotProduct, RBF, WhiteKernel
 def frame_of(xy, t, label):
-    return pd.DataFrame({"time": pd.to_datetime(t, unit="s"), "x": xy[:, 0], "n": xy[:, 1], "y": label, "lat": 44.0, "lon": 132.0})
+    return pd.DataFrame({"time": pd.to_datetime(t, unit="s"), "x": xy[:, 0], "y": xy[:, 1], "l": label, "lat": 44.0, "lon": 132.0})
 def check(name, ok, detail=""):
     print(f"{'OK  ' if ok else 'FAIL'} {name} {detail}")
 def simulate(count, sigma_acc, sigma_meas, seed, drift=(5.0, 2.0)):

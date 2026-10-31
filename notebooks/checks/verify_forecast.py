@@ -13,7 +13,7 @@ shell.run_cell(r'''
 import warnings; warnings.filterwarnings("ignore")
 from statsmodels.tsa.arima_process import arma_generate_sample
 def frame_of(o, n, t, label):
-    return pd.DataFrame({"time": pd.to_datetime(t, unit="s"), "x": o, "n": n, "y": label, "lat": 44.0, "lon": 132.0})
+    return pd.DataFrame({"time": pd.to_datetime(t, unit="s"), "x": o, "y": n, "l": label, "lat": 44.0, "lon": 132.0})
 def check(name, ok, detail=""):
     print(f"{'OK  ' if ok else 'FAIL'} {name} {detail}")
 count = 3000; t = np.arange(count) * 10.0

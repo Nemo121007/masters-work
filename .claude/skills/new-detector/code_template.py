@@ -43,7 +43,7 @@ scenario_results: list[dict[str, object]] = []
 for scenario_name, bundle in SCENARIOS:
     train = bundle["train"]
     test = bundle["test"]
-    anomaly_train = train["y"].astype(str).to_numpy() == "anomaly"
+    anomaly_train = train["l"].astype(str).to_numpy() == "anomaly"
 
     print("=" * 72)
     print(scenario_name)

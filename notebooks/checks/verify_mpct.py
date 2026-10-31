@@ -24,7 +24,7 @@ print(f"######## mpct-code-cell: {time.perf_counter() - started:.1f} s, {'ok' if
 shell.run_cell(r'''
 import itertools, warnings; warnings.filterwarnings("ignore")
 def frame_of(xy, t, label):
-    return pd.DataFrame({"time": pd.to_datetime(t, unit="s"), "x": xy[:, 0], "n": xy[:, 1], "y": label, "lat": 44.0, "lon": 132.0})
+    return pd.DataFrame({"time": pd.to_datetime(t, unit="s"), "x": xy[:, 0], "y": xy[:, 1], "l": label, "lat": 44.0, "lon": 132.0})
 def check(name, ok, detail=""):
     print(f"{'OK  ' if ok else 'FAIL'} {name} {detail}", flush=True)
 def simulate(count, sigma_acc, sigma_meas, seed, gaps=True):
