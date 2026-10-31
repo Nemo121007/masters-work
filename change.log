@@ -1,6 +1,5 @@
 
-## 2026-10-31 — Термин «основная точка» вместо «ядровая точка»
-report/glossary.md: термин «основная точка» (core point, DBSCAN); «ядровая точка» — в «Не использовать»
-report/Отчёт.tex: DBSCAN — «основная точка»
-notebooks/example_model.ipynb: DBSCAN — markdown, docstring и сообщение об ошибке — «основная точка»
-notebooks/checks/verify_dbscan.py: подписи проверок — «основная точка»
+## 2026-10-31 — Удалена фраза «ниже — только отличия»
+report/Отчёт.tex: описания моделей (GP-EKF, HMM, LOF, Isolation Forest, One-Class SVM, Robust PCA, LSTM, TCN, DONUT) — без «ниже — только отличия»
+notebooks/example_model.ipynb: те же markdown-ячейки — без «ниже — только отличия»
+report/style.md: правило ссылки на каркас другой модели — фраза «ниже — только отличия» не пишется
