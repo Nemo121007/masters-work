@@ -54,25 +54,27 @@ check("прогноз окна = sklearn (широкое априорное тр
 xy, t = simulate(6000, 0.05, 8.0, 1)
 frame = frame_of(xy, t, np.full(len(t), "move"))
 hyper = fit_gp_on_train(frame)
+vl = restart_speed_limit(frame)
 check("σ_noise ≈ шуму GPS 8 м", abs(hyper[2] / 8.0 - 1) < 0.15, f"гиперпараметры {np.round(hyper, 3)}")
-scores, _ = gp_detect(frame, hyper, np.array([np.inf]))
+scores, _ = gp_detect(frame, hyper, vl, np.array([np.inf]))
 check("медиана NIS на штатном ходу ≈ χ²₂ (1.39)", 1.0 < np.nanmedian(scores[0]) < 1.9, f"{np.nanmedian(scores[0]):.2f}")
 check("первые 3 точки без оценки", np.all(np.isnan(scores[0, :3])) and not np.isnan(scores[0, 3]))
 t3 = t.copy(); t3[1000] = t3[999]
-s3, _ = gp_detect(frame_of(xy, t3, np.full(len(t), "move")), hyper, np.array([np.inf]))
+s3, _ = gp_detect(frame_of(xy, t3, np.full(len(t), "move")), hyper, vl, np.array([np.inf]))
 check("совпадающее время", np.isnan(s3[0, 1000]) and not np.isnan(s3[0, 1001]))
 t4 = t.copy(); t4[1200:] += 600.0
-s4, _ = gp_detect(frame_of(xy, t4, np.full(len(t), "move")), hyper, np.array([np.inf]))
+s4, _ = gp_detect(frame_of(xy, t4, np.full(len(t), "move")), hyper, vl, np.array([np.inf]))
 check("разрыв по времени", np.all(np.isnan(s4[0, 1200:1203])) and not np.isnan(s4[0, 1203]))
 tau = GP_CHI999 * 3
 xy5 = xy.copy(); xy5[1500] += 5000.0
-s5, r5 = gp_detect(frame_of(xy5, t, np.full(len(t), "move")), hyper, np.array([tau, np.inf]))
+s5, r5 = gp_detect(frame_of(xy5, t, np.full(len(t), "move")), hyper, vl, np.array([tau, np.inf]))
 check("выброс с заменой", r5[0, 1500] and not r5[0, 1501:1520].any(), f"отвергнуто рядом {int(r5[0, 1495:1520].sum())}")
 check("без замены — след выброса", s5[1, 1501] > tau, f"оценка соседа {s5[1, 1501]:.0f}")
-xy6 = xy.copy(); xy6[2000:2060] += 5000.0
-s6, r6 = gp_detect(frame_of(xy6, t, np.full(len(t), "move")), hyper, np.array([tau]))
-run_end = 2000 + int(np.argmax(t[2000:] - t[2000] > TIME_GAP_SEC))
-check("перезапуск после 180 с отвергнутых", r6[0, 2000:run_end].all() and np.all(np.isnan(s6[0, run_end:run_end + 3])))
+xy6 = xy.copy(); xy6[2000:2060] += 50_000.0
+s6, r6 = gp_detect(frame_of(xy6, t, np.full(len(t), "move")), hyper, vl, np.array([tau]))
+check("длинный эпизод 50 км: отвергнут целиком, возврат на трек",
+      r6[0, 2000:2060].all() and not r6[0, 2060:2100].any(),
+      f"отвергнуто в эпизоде {int(r6[0, 2000:2060].sum())} из 60, после {int(r6[0, 2060:2100].sum())}")
 
 xy7, t7 = simulate(5000, 0.05, 8.0, 3)
 label = np.full(len(t7), "move", dtype=object)
@@ -82,8 +84,9 @@ for start in r.choice(np.arange(50, len(t7) - 50), 40, replace=False):
     xy7[start:start + length] += r.normal(0, 3000, (length, 2)); label[start:start + length] = "anomaly"
 f7 = frame_of(xy7, t7, label); truth = label == "anomaly"
 h7 = fit_gp_on_train(f7)
-sel = select_gp_threshold(f7, h7, MCC_BAND)
-s7, r7 = gp_detect(f7, h7, np.array([sel["tau"]])); sc = ~np.isnan(s7[0]); p = r7[0]
+vl7 = restart_speed_limit(f7)
+sel = select_gp_threshold(f7, h7, vl7, MCC_BAND)
+s7, r7 = gp_detect(f7, h7, vl7, np.array([sel["tau"]])); sc = ~np.isnan(s7[0]); p = r7[0]
 print(f"дрейф и аномалии: гиперпараметры {np.round(h7, 3)}, порог {sel['tau']:.1f}, "
       f"TP {int(np.sum(p & truth & sc))} FP {int(np.sum(p & ~truth & sc))} FN {int(np.sum(~p & truth & sc))}")
 ''')

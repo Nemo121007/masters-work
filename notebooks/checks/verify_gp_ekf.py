@@ -42,8 +42,8 @@ f0 = frame_of(xy0, t0, np.full(len(t0), "move"))
 sa0, sm0 = fit_kalman_on_train(f0)
 nodes = [np.linspace(-50, 50, 3), np.linspace(-50, 50, 3)]
 zero = {"nodes": nodes, "mean": np.zeros((2, 3, 3)), "variance": np.zeros((2, 3, 3)), "gradient": np.zeros((2, 2, 3, 3))}
-s_gp, _ = gp_ekf_detect(f0, {"correction": zero, "sigma_acc": np.array([sa0, sa0]), "sigma_meas": sm0}, np.array([np.inf]))
-s_k, _ = kalman_detect(f0, sa0, sm0, np.array([np.inf]))
+s_gp, _ = gp_ekf_detect(f0, {"correction": zero, "sigma_acc": np.array([sa0, sa0]), "sigma_meas": sm0, "speed_limit": np.inf}, np.array([np.inf]))
+s_k, _ = kalman_detect(f0, sa0, sm0, np.inf, np.array([np.inf]))
 both = ~np.isnan(s_k[0])
 check("g ≡ 0 → NIS фильтра Калмана", np.array_equal(both, ~np.isnan(s_gp[0])) and np.max(np.abs(s_gp[0][both] - s_k[0][both]) / np.maximum(s_k[0][both], 1.0)) < 1e-4,
       f"max отн. разница {np.max(np.abs(s_gp[0][both] - s_k[0][both]) / np.maximum(s_k[0][both], 1.0)):.1e}")
@@ -99,7 +99,7 @@ check("без поля: поправка ≈ 0, опорные точки чер
       + "; ".join(f"σ_f {a['amplitude']:.2g} ℓ {a['lengths'].round(2)}" for a in c0["axes"]))
 
 tic = time.perf_counter(); scores, _ = gp_ekf_detect(ftest, model, np.array([np.inf])); pass_time = time.perf_counter() - tic
-sk, _ = kalman_detect(ftest, *model["kalman_sigma"], np.array([np.inf]))
+sk, _ = kalman_detect(ftest, *model["kalman_sigma"], np.inf, np.array([np.inf]))
 check("медиана NIS на штатном ходу ≈ χ²₂ (1.39)", 1.1 < np.nanmedian(scores[0]) < 1.7,
       f"GP-EKF {np.nanmedian(scores[0]):.2f}, Калман {np.nanmedian(sk[0]):.2f}; проход {pass_time:.1f} с на {len(t_t)} точек")
 print(f"логарифм правдоподобия на test (с 3-й точки): GP-EKF {np.nansum(-0.5 * scores[0]):.0f}, Калман {np.nansum(-0.5 * sk[0]):.0f} (только квадратичная часть)")
@@ -116,11 +116,11 @@ xy5 = xy_t.copy(); xy5[1500] += 5000.0
 s5, r5 = gp_ekf_detect(frame_of(xy5, t_t, "move"), model, np.array([tau, np.inf]))
 check("выброс с заменой", r5[0, 1500] and not r5[0, 1501:1520].any(), f"отвергнуто рядом {int(r5[0, 1495:1520].sum())}")
 check("без замены — след выброса", s5[1, 1501] > tau, f"NIS соседа {s5[1, 1501]:.0f}")
-xy6 = xy_t.copy(); xy6[2000:2060] += 5000.0
+xy6 = xy_t.copy(); xy6[2000:2060] += 50_000.0
 s6, r6 = gp_ekf_detect(frame_of(xy6, t_t, "move"), model, np.array([tau]))
-run_end = 2000 + int(np.argmax(t_t[2000:] - t_t[2000] > TIME_GAP_SEC))
-check("перезапуск после 180 с отвергнутых", r6[0, 2000:run_end].all() and np.all(np.isnan(s6[0, run_end:run_end + 2])),
-      f"отвергнуто подряд {int(r6[0, 2000:run_end].sum())}, без оценки после {int(np.isnan(s6[0, run_end:run_end + 2]).sum())}")
+check("длинный эпизод 50 км: отвергнут целиком, возврат на трек",
+      r6[0, 2000:2060].all() and not r6[0, 2060:2100].any(),
+      f"отвергнуто в эпизоде {int(r6[0, 2000:2060].sum())} из 60, после {int(r6[0, 2060:2100].sum())}")
 
 xy7, t7 = simulate(5000, SA, SM, 4)
 label = np.full(len(t7), "move", dtype=object)
@@ -134,8 +134,9 @@ m7 = fit_gp_ekf_on_train(f7)
 sel = select_gp_ekf_threshold(f7, m7, MCC_BAND)
 s7, r7 = gp_ekf_detect(f7, m7, np.array([sel["tau"]])); sc = ~np.isnan(s7[0]); p = r7[0]
 sa7, sm7 = fit_kalman_on_train(f7)
-selk = select_kalman_threshold(f7, sa7, sm7, MCC_BAND)
-sk7, rk7 = kalman_detect(f7, sa7, sm7, np.array([selk["tau"]])); sck = ~np.isnan(sk7[0]); pk = rk7[0]
+vlk = restart_speed_limit(f7)
+selk = select_kalman_threshold(f7, sa7, sm7, vlk, MCC_BAND)
+sk7, rk7 = kalman_detect(f7, sa7, sm7, vlk, np.array([selk["tau"]])); sck = ~np.isnan(sk7[0]); pk = rk7[0]
 print(f"поле и аномалии ({time.perf_counter() - tic:.0f} с): GP-EKF порог {sel['tau']:.1f}, TP {int(np.sum(p & truth7 & sc))} FP {int(np.sum(p & ~truth7 & sc))} FN {int(np.sum(~p & truth7 & sc))}; "
       f"Калман порог {selk['tau']:.1f}, TP {int(np.sum(pk & truth7 & sck))} FP {int(np.sum(pk & ~truth7 & sck))} FN {int(np.sum(~pk & truth7 & sck))}")
 ''')

@@ -17,6 +17,7 @@
 | $a_i$, $\hat a_i$ | бинарные индикаторы аномалии: $a_i=\mathbf{1}[y_i=\mathrm{anomaly}]$, $\hat a_i=\mathbf{1}[\hat y_i=\mathrm{anomaly}]$ | — | `anomaly_mask` |
 | $s_i$ | score точки: чем больше, тем аномальнее | зависит от модели | `*_scores` |
 | $\tau$ | порог по score: $\hat a_i=\mathbf{1}[s_i>\tau]$ | как у $s_i$ | `selection["tau"]` |
+| $D_{o,j}$, $D_{n,j}$ | дисперсии прогноза AR и ARIMA по осям на узле $j$; растут с горизонтом прогноза | м² | `variance` в `forecast_detect` |
 | $\rho$ | доля обучающей части ряда в сценарии | — | `TEST_SPLIT_1`, `TEST_SPLIT_2` |
 | $(\varphi_0,\lambda_0)$ | начало координат ENU | градусы | первая точка ряда или выборки |
 | $v_i$ | скорость | м/с | кинематика в `trajectory_kinematics` |

@@ -26,17 +26,22 @@ for order, params in (((2, 0, 0), ([1.5, -0.6], [], 5.0)), ((2, 1, 1), ([0.6, 0.
     true = np.r_[params[0], params[1], params[2] ** 2]
     check(f"{order} параметры", np.allclose(det["params"][0], true, atol=0.08 * np.maximum(1, np.abs(true))), f"{np.round(det['params'][0], 3)} истина {true}")
     scores, _ = forecast_detect(frame, det, np.array([np.inf]))
-    pred_o = ARIMA(o - o[0], order=order, trend="n").filter(det["params"][0]).get_prediction(start=0).predicted_mean + o[0]
-    pred_n = ARIMA(n - n[0], order=order, trend="n").filter(det["params"][1]).get_prediction(start=0).predicted_mean + n[0]
-    ref = np.hypot(o - pred_o, n - pred_n)
-    check(f"{order} фильтр = statsmodels", np.abs(scores[0, 300:] - ref[300:]).max() < 1e-3, f"{np.abs(scores[0, 300:] - ref[300:]).max():.1e} м")
+    def nis_ref(oo, nn):
+        """Нормированная невязка по прогнозу statsmodels: квадрат ошибки, делённый на дисперсию прогноза, по осям."""
+        total = 0.0
+        for values, params_axis in ((oo, det["params"][0]), (nn, det["params"][1])):
+            pred = ARIMA(values, order=order, trend="n").filter(params_axis).get_prediction(start=0)
+            total = total + (values - pred.predicted_mean) ** 2 / pred.var_pred_mean
+        return total
+    ref = nis_ref(o - o[0], n - n[0])
+    rel = np.abs(scores[0, 300:] / ref[300:] - 1).max()
+    check(f"{order} фильтр = statsmodels", rel < 1e-4, f"max отн. разница {rel:.1e}")
     check(f"{order} первые {k} точек без оценки", np.all(np.isnan(scores[0, :k])) and not np.isnan(scores[0, k]))
     keep = np.ones(count, bool); keep[[500, 501, 502, 900]] = False; keep[1500:1510] = False
     s2, _ = forecast_detect(frame_of(o[keep], n[keep], t[keep], np.full(keep.sum(), "move")), det, np.array([np.inf]))
     og = np.where(keep, o - o[0], np.nan); ng = np.where(keep, n - n[0], np.nan)
-    ref2 = np.hypot(og - ARIMA(og, order=order, trend="n").filter(det["params"][0]).get_prediction(start=0).predicted_mean,
-                    ng - ARIMA(ng, order=order, trend="n").filter(det["params"][1]).get_prediction(start=0).predicted_mean)[keep]
-    check(f"{order} пропуски = statsmodels", np.abs(s2[0][300:] - ref2[300:]).max() < 1e-3)
+    ref2 = nis_ref(og, ng)[keep]
+    check(f"{order} пропуски = statsmodels", np.abs(s2[0][300:] / ref2[300:] - 1).max() < 1e-4)
     t3 = t.copy(); t3[1000] = t3[999]
     s3, _ = forecast_detect(frame_of(o, n, t3, np.full(count, "move")), det, np.array([np.inf]))
     check(f"{order} совпадающее время", np.isnan(s3[0, 1000]) and not np.isnan(s3[0, 1001]))
@@ -48,9 +53,11 @@ for order, params in (((2, 0, 0), ([1.5, -0.6], [], 5.0)), ((2, 1, 1), ([0.6, 0.
     s5, r5 = forecast_detect(frame_of(o5, n, t, np.full(count, "move")), det, np.array([tau, np.inf]))
     check(f"{order} выброс с заменой", r5[0, 1500] and r5[0].sum() == 1)
     check(f"{order} без замены — эхо", s5[1, 1501] > tau)
-    o6 = o.copy(); o6[2000:2050] += 5000.0
+    o6 = o.copy(); o6[2000:2050] += 50_000.0
     s6, r6 = forecast_detect(frame_of(o6, n, t, np.full(count, "move")), det, np.array([tau]))
-    check(f"{order} перезапуск после 180 с отвергнутых", r6[0, 2000:2019].all() and np.all(np.isnan(s6[0, 2019:2019 + k])))
+    check(f"{order} длинный эпизод 50 км: отвергнут целиком, возврат на трек",
+          r6[0, 2000:2050].all() and not r6[0, 2050:2100].any(),
+          f"отвергнуто в эпизоде {int(r6[0, 2000:2050].sum())} из 50, после {int(r6[0, 2050:2100].sum())}")
 
 r = np.random.default_rng(3); count = 4000
 def axis():

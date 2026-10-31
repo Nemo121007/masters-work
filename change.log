@@ -1,24 +1,8 @@
 
-## 2026-10-31 — Итоги прогона на реальных данных
-report/run_results_2026-10-31.md: метрики test, выбранные параметры и замечания по прогону на data/2.csv (рассчитаны MPCT, AR, ARIMA, Kalman, GP, GP-EKF, HMM, Hampel, LOF, Isolation Forest)
-notebooks/example_model.ipynb: MCC в таблицах метрик округляется до 4 знаков, как Precision/Recall/F1
-report/notebook_review.md: чек-лист ошибок прогона на реальных данных — Kalman CV df2, параметры не оценены
-report/notebook_review.md: чек-лист — AR(2), φ ≈ (0, 1) из-за участков с Δt = 20 с
-report/rewrite_plan.md: решение — параметры AR и ARIMA оцениваются только по участкам с Δt = 10 с
-report/notebook_review.md: чек-лист — общее (прыжки через серии аномалий в обучении), GP-EKF (доля дисперсии < 0, сетка скоростей)
-report/rewrite_plan.md: решение — обучающие отрезки штатного хода рвутся на каждой выброшенной аномальной точке
-report/notebook_review.md: чек-лист — MPCT, перезапуск цепочки без проверки скорости
-report/rewrite_plan.md: решение — MPCT, перезапуск цепочки с проверкой скорости до лучшего конца
-report/notebook_review.md: чек-лист — Hampel, правок нет (неприменим)
-report/rewrite_plan.md: решение — фильтр Хэмпела неприменим к данным, правок нет
-report/notebook_review.md: чек-лист — One-Class SVM, Robust PCA, кэш второго прохода
-report/rewrite_plan.md: решение — кэш оценок второго прохода
-report/notebook_review.md: чек-лист — модели прогноза, перезапуск по серии отвергнутых точек
-report/rewrite_plan.md: решение — модели прогноза без перезапуска по серии отвергнутых, AR и ARIMA — нормированная невязка
-
-## 2026-10-31 — Обучающие отрезки штатного хода (чек-лист, п. 1)
-notebooks/example_model.ipynb: общая ячейка — move_segments (отрезок рвётся на каждой аномальной точке и на разрыве по времени), segments_layout, dbscan_segments через неё; _grid_gap_nodes удалена; fit_forecast_axis принимает начала отрезков, fit_forecast_detector — по move_segments; MPCT (сетка v_+), Kalman, GP, GP-EKF, DBSCAN, LOF, Isolation Forest, One-Class SVM, Robust PCA, LSTM, TCN обучаются по move_segments; DONUT — точка штатного хода после серии аномалий без предшественника; markdown AR, Kalman, GP, DBSCAN, DONUT
-report/Отчёт.tex: AR, Kalman, GP, DBSCAN, DONUT — обучение по обучающим отрезкам
-report/glossary.md: термин «обучающий отрезок»
-report/rewrite_plan.md: решение — HMM, точка штатного хода после серии аномалий без признаков, цепь не рвётся
-notebooks/example_model.ipynb, report/Отчёт.tex: HMM — точка штатного хода после серии аномалий без признаков, цепь не рвётся (режим без наблюдения)
+## 2026-10-31 — Модели прогноза: перезапуск с проверкой скорости, NIS у AR и ARIMA (чек-лист, п. 2)
+notebooks/example_model.ipynb: общая ячейка — move_speeds, restart_speed_limit (наибольшая скорость штатного хода обучающих отрезков), restart_allowed (перезапуск после серии отвергнутых длиннее 180 с только при достижимости от последней принятой точки); forecast_detect — NIS вместо ошибки в метрах, кандидат порога χ²₀.₉₉₉(2), перезапуск через restart_allowed; kalman_detect, gp_detect, _gp_ekf_filter — перезапуск через restart_allowed, аргумент speed_limit; MPCT — сетка v_+ по move_speeds; печать предела скорости; markdown AR, Kalman, GP
+notebooks/checks/verify_forecast.py, verify_kalman.py, verify_gp.py, verify_gp_ekf.py: сверка NIS AR/ARIMA со statsmodels; проверка длинного эпизода 50 км (отвергнут целиком, возврат на трек) вместо прежнего перезапуска; аргумент speed_limit
+report/Отчёт.tex: AR — NIS, перезапуск с проверкой достижимости, χ²₀.₉₉₉(2) в сетке; Kalman, GP — перезапуск с проверкой достижимости
+report/glossary.md: обозначения D_{o,j}, D_{n,j}
+report/rewrite_plan.md: пересмотр решения о перезапуске — вариант (б), общий предел скорости
+report/notebook_review.md: чек-лист — п. 1 и п. 2 выполнены
