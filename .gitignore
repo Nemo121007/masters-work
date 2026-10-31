@@ -24,3 +24,4 @@ report/*.out
 report/*.pdf
 report/*.gz
 *.png
+notebooks/trained_models/

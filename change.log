@@ -1,6 +1,6 @@
 
-## 2026-10-31 — Столбцы кода под обозначения: n → y, y → l
-notebooks/example_model.ipynb: столбец метки y → l (в т. ч. переименование status → l), северной координаты n → y; столбцы AR — ("x", "y"); docstring и подписи колонок; markdown предобработки — «столбцы x и y»; AR_TREND, ARIMA_TREND = "n" (тренд statsmodels) не затронуты
-notebooks/checks/verify_*.py, .claude/skills/new-detector/code_template.py: столбцы x, y, l
-report/glossary.md: колонка «В коде» — y, l; правило — столбцы совпадают с обозначениями
-report/rewrite_plan.md: пункт о переименовании столбцов выполнен
+## 2026-10-31 — Сохранение и загрузка обученных моделей
+notebooks/example_model.ipynb: флаг FORCE_TRAIN = False в константах; TRAINED_MODELS_DIR = notebooks/trained_models — создаётся при отсутствии; load_or_train в общей ячейке (torch.save / torch.load, отпечаток обучающей выборки, при несовпадении — обучение заново); 16 ячеек моделей — обучение, выбор порога и оценки train в train_model, состояние через load_or_train, у каждой модели свой файл
+.gitignore: notebooks/trained_models/
+notebooks/AGENTS.md: правило обучения и сохранения моделей
+report/rewrite_plan.md: решение о сохранении моделей
