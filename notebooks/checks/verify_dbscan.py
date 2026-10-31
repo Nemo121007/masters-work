@@ -54,10 +54,10 @@ model = fit_dbscan_on_train(f)
 eps = float(np.quantile(model["k_distance"], 0.9))
 db = DBSCAN(eps=eps, min_samples=DBSCAN_MIN_SAMPLES).fit(model["points"])
 core_ref = np.zeros(len(model["points"]), dtype=bool); core_ref[db.core_sample_indices_] = True
-check("ядровые точки = sklearn DBSCAN", np.array_equal(core_ref, model["k_distance"] <= eps), f"ядровых {int(core_ref.sum())} из {len(core_ref)}")
+check("основные точки = sklearn DBSCAN", np.array_equal(core_ref, model["k_distance"] <= eps), f"основных {int(core_ref.sum())} из {len(core_ref)}")
 core = model["points"][core_ref]
 dist = NearestNeighbors(n_neighbors=1).fit(core).kneighbors(model["points"])[0][:, 0]
-check("шум sklearn DBSCAN = дальше ε от ядровой точки", np.array_equal(db.labels_ == -1, dist > eps), f"шум {int(np.sum(db.labels_ == -1))}")
+check("шум sklearn DBSCAN = дальше ε от основной точки", np.array_equal(db.labels_ == -1, dist > eps), f"шум {int(np.sum(db.labels_ == -1))}")
 
 s, r = dbscan_detect(f, model, np.array([eps]))
 check("первые 2 точки без оценки", np.all(np.isnan(s[0, :2])) and not np.isnan(s[0, 2]))
