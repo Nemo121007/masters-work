@@ -6,7 +6,7 @@
 
 ## Структура блокнота
 
-1. Гиперпараметры (общие): `TEST_SPLIT_1/2`, `MCC_BAND`, `PLOT_TAIL`, `SHOW_PLOTS`,
+1. Гиперпараметры (общие): `TEST_SPLIT`, `TRAIN_BLOCK_START`, `TRAIN_BLOCK_LENGTH`, `MCC_BAND`, `PLOT_TAIL`, `SHOW_PLOTS`,
    `MAP_FIGSIZE`, `ALLOWED_STATUS`; для оконных torch-моделей — `N_WINDOWS`,
    `N_EPOCHS`, `TORCH_BATCH_SIZE`, `TORCH_INFER_BATCH`, `TORCH_LR`.
 2. Импорты: одна code-ячейка сразу после констант; все `import` / `from`
@@ -18,7 +18,7 @@
    `fmt_num` / `nfmt`, окна и кинематика — всё, что используется двумя
    и более моделями.
 6. На модель: markdown (теория) + code (константы модели, её функции
-   и классы, эксперимент на df1 и df2).
+   и классы, эксперимент на `dataset` — обучающий блок и тестовая выборка).
 
 Карты (`plot_track_maps`) — только под `if SHOW_PLOTS:`; текст и таблицы, в том числе таблица метрик после
 каждой модели, выводятся всегда.
@@ -81,12 +81,12 @@ operational distance loss (move-цепочка ENU). На test тот же по�
 
 ## Вывод code-ячейки модели (4 шага, без дублирования карт)
 
-1. Сводная таблица df1 + df2.
+1. Сводная таблица метрик test.
 2. Одна карта эталона: `plot_track_maps(..., map_panel="ground_truth")`
-   на хвосте test df1 (`PLOT_TAIL`).
-3. Для каждого сценария: таблица одной строки + карта модели
+   на хвосте test (`PLOT_TAIL`).
+3. Карта модели
    `map_panel="model"`.
-4. Не дублировать карту эталона в блоках по сценариям.
+4. Не дублировать карту эталона и таблицу метрик.
 
 Карты: `app/viz/track_osm.plot_track_maps`, `annotate=False`,
 `figsize=MAP_FIGSIZE`, `slice_trajectory_series`.

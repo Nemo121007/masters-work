@@ -34,8 +34,7 @@ def {{slug}}_scores(model: object, frame: pd.DataFrame) -> np.ndarray:
 
 
 SCENARIOS = (
-    (f"df1 (rho={TEST_SPLIT_1:.0%})", df1),
-    (f"df2 (rho={TEST_SPLIT_2:.0%})", df2),
+    (DATASET_NAME, dataset),
 )
 
 {{slug}}_rows: list[dict[str, object]] = []
@@ -85,7 +84,7 @@ display_test_report_table(
 
 _ideal_test = scenario_results[0]["test"]
 _map_tail = min(PLOT_TAIL, len(_ideal_test))
-print(f"\nИдеальная разметка: последние {nfmt(_map_tail)} точек теста df1 (bbox: move + 5%)")
+print(f"\nИдеальная разметка: последние {nfmt(_map_tail)} точек теста (bbox: move + 5%)")
 _dummy_move = np.zeros(len(_ideal_test), dtype=bool)
 _truth_pred, _truth_gt = trajectory_series_pair(_ideal_test, _dummy_move)
 _truth_pred = slice_trajectory_series(_truth_pred, _map_tail)
@@ -101,11 +100,6 @@ plot_track_maps(
 
 for item in scenario_results:
     tail = min(PLOT_TAIL, len(item["test"]))
-    print(f"\n{item['name']}")
-    display_test_report_table(
-        pd.DataFrame([test_report_row(str(item["name"]), item["metrics"])]).loc[:, report_columns],
-        caption=f"Метрики test: {item['name']}",
-    )
     print(f"  Карта разметки модели: последние {nfmt(tail)} точек теста (bbox: move + 5%)")
     prediction, ground_truth = trajectory_series_pair(item["test"], item["predicted_test"])
     prediction = slice_trajectory_series(prediction, tail)

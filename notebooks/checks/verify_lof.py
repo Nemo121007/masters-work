@@ -17,7 +17,7 @@ assert shell.run_cell(r"""
 _threshold_candidates_full = threshold_candidates
 def threshold_candidates(scores, n_quantiles=20, n_log=10):
     return _threshold_candidates_full(scores, n_quantiles, n_log)
-for _bundle in (df1, df2):
+for _bundle in (dataset,):
     _bundle["train"] = _bundle["train"].iloc[-2000:].reset_index(drop=True)
     _bundle["test"] = _bundle["test"].iloc[:1000].reset_index(drop=True)
 """).success
