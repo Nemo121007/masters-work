@@ -1,3 +1,3 @@
 
-## 2026-11-01 — GP-EKF: границы оценки шума фильтра
-notebooks/example_model.ipynb: fit_gp_ekf_noise — верхние границы σ_acc ≤ 10 м/с², σ_meas ≤ GP_EKF_SIGMA_MEAS_MAX = 1000 м; при нечисловом правдоподобии — штраф _INADMISSIBLE_PENALTY; предупреждение при оценке на любой границе. Причина: на data/2.csv L-BFGS-B без верхних границ ушёл в переполнение exp, состояние фильтра стало NaN, gp_ekf_lookup упал с IndexError
+## 2026-11-01 — Оценка фильтра Калмана в общей ячейке
+notebooks/example_model.ipynb: константы KALMAN_*, kalman_process_noise, kalman_likelihood_data, kalman_loglike, fit_kalman_on_train перенесены из ячейки фильтра Калмана в общую ячейку — их использует GP-EKF (по правилу notebooks/AGENTS.md: функции двух и более моделей — в общей ячейке); при запуске GP-EKF без ячейки Kalman был NameError
