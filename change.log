@@ -1,6 +1,3 @@
 
-## 2026-10-31 — Сохранение и загрузка обученных моделей
-notebooks/example_model.ipynb: флаг FORCE_TRAIN = False в константах; TRAINED_MODELS_DIR = notebooks/trained_models — создаётся при отсутствии; load_or_train в общей ячейке (torch.save / torch.load, отпечаток обучающей выборки, при несовпадении — обучение заново); 16 ячеек моделей — обучение, выбор порога и оценки train в train_model, состояние через load_or_train, у каждой модели свой файл
-.gitignore: notebooks/trained_models/
-notebooks/AGENTS.md: правило обучения и сохранения моделей
-report/rewrite_plan.md: решение о сохранении моделей
+## 2026-11-01 — GP-EKF: границы оценки шума фильтра
+notebooks/example_model.ipynb: fit_gp_ekf_noise — верхние границы σ_acc ≤ 10 м/с², σ_meas ≤ GP_EKF_SIGMA_MEAS_MAX = 1000 м; при нечисловом правдоподобии — штраф _INADMISSIBLE_PENALTY; предупреждение при оценке на любой границе. Причина: на data/2.csv L-BFGS-B без верхних границ ушёл в переполнение exp, состояние фильтра стало NaN, gp_ekf_lookup упал с IndexError
