@@ -1,3 +1,3 @@
 
-## 2026-11-01 — HMM раньше DBSCAN: признаки, нормировка, второй проход описаны в HMM
-notebooks/example_model.ipynb, report/Отчёт.tex: определение признаков (v, a_long, a_lat), робастной нормировки, второго прохода и точек без оценки перенесено из DBSCAN в HMM; DBSCAN, LOF, Isolation Forest, One-Class SVM, Robust PCA, LSTM, TCN, DONUT — «как у HMM»; набор T у Isolation Forest и One-Class SVM — «как у LOF»; в блокноте DBSCAN — уровни квантилей ε словами, как в отчёте
+## 2026-11-01 — Отчёт: итоговые таблицы на повёрнутых страницах
+report/Отчёт.tex: пакет pdflscape; раздел «Итоговые таблицы на тесте (сортировка)» — в окружении landscape

@@ -22,6 +22,7 @@
 \usepackage{subcaption}
 \usepackage{hyperref}
 \usepackage{float}
+\usepackage{pdflscape}
 \usepackage{booktabs}
 \usepackage{array}
 \makeatletter
@@ -800,6 +801,8 @@
 		\item Подбор порога --- как у AR(2); второй проход выполняется для каждого кандидата.
 	\end{enumerate}
 
+% Итоговые таблицы шире страницы: страницы повёрнуты (pdflscape поворачивает и вёрстку, и лист в PDF).
+\begin{landscape}
 \subsection{Итоговые таблицы на тесте (сортировка)}
 \subsubsection{Сортировка: F1}
 \begin{table}[H]
@@ -860,5 +863,6 @@ MPCT & 228\,905.27 & 6\,380\,999.81 & 92\,793\,153.6 & 15.00 & 674.00 & 3\,617 &
 \bottomrule
 \end{tabular}
 \end{table}
+\end{landscape}
 
 \end{document}
