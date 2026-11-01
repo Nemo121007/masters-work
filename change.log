@@ -1,3 +1,5 @@
 
-## 2026-11-01 — Оценка фильтра Калмана в общей ячейке
-notebooks/example_model.ipynb: константы KALMAN_*, kalman_process_noise, kalman_likelihood_data, kalman_loglike, fit_kalman_on_train перенесены из ячейки фильтра Калмана в общую ячейку — их использует GP-EKF (по правилу notebooks/AGENTS.md: функции двух и более моделей — в общей ячейке); при запуске GP-EKF без ячейки Kalman был NameError
+## 2026-11-01 — Итоговые таблицы по прогону на data/2.csv
+notebooks/example_model.ipynb: каркас итоговых таблиц (markdown) — метрики test 16 моделей, по убыванию F1 и по возрастанию DL; подпись — прогон 2026-11-01, размеры выборок
+report/Отчёт.tex: итоговые таблицы — те же метрики; подпись раздела — прогон и размеры выборок
+report/run_results_2026-10-31.md: метрики полного прогона и замечания (GP-EKF, HMM, время)
