@@ -24,7 +24,7 @@
 | --- | --- |
 | `app/**/*.py` | раздел «Стиль кода» ниже; проверка — скилл `check-app` |
 | `notebooks/*.ipynb` | `notebooks/AGENTS.md`; markdown-ячейки — `report/style.md`, `report/glossary.md` |
-| `report/Отчёт.tex` | скилл `report`, `report/style.md`, `report/glossary.md` |
+| `report/report_tex/old_report.tex` | скилл `report`, `report/style.md`, `report/glossary.md` |
 | `docs/notes/*.md`, `report/*.md` | `report/style.md`, `report/glossary.md` |
 
 Если файл правил недоступен — сообщить об этом в отчёте; содержимое не подменять предположениями.
@@ -110,7 +110,7 @@
   затем зависимая от неё работа.
 - Если документ-источник (решение в `report/rewrite_plan.md`, `report/notebook_review.md`, глоссарий,
   markdown модели) оказался неверен — исправить его явно и сообщить в отчёте; молча от него не отходить.
-  `report/Отчёт.tex` и `docs/notes/methods.md` — после подтверждения (раздел «Запреты»).
+  `report/report_tex/old_report.tex` и `docs/notes/methods.md` — после подтверждения (раздел «Запреты»).
 - Выполненная проверка и предположение различаются: в отчёте — только реально запущенные проверки
   с результатом; непроверенное помечается явно, недоступный инструмент или данные — как ограничение.
 - Ошибка кода и ошибка окружения (нет пакета, данных, памяти, сети) различаются и называются явно;
@@ -124,7 +124,7 @@
 2. Правка блокнота: код и markdown модели.
 3. Проверка: дымовой прогон затронутой модели или `notebooks/checks/verify_*.py`; проверки моделей —
    по одной. Блокнот целиком запускает пользователь.
-4. Правка `report/Отчёт.tex`, `docs/notes/`, глоссария.
+4. Правка `report/report_tex/old_report.tex`, `docs/notes/`, глоссария.
 5. Коммит — только по команде пользователя.
 
 Утверждённая очередь однотипных проверок выполняется без вопросов между моделями: прошла — сообщить
@@ -218,7 +218,7 @@
 
 ## Канон
 
-- Источник истины: `notebooks/example_model.ipynb` и `report/Отчёт.tex`.
+- Источник истины: `notebooks/example_model.ipynb` и `report/report_tex/old_report.tex`.
 - Правила оформления блокнотов — `notebooks/AGENTS.md`.
 - Два варианта блокнотов: `example_model.ipynb`, `train_size.ipynb` — реальные данные (`data/2.csv`);
   `example_model_anon.ipynb`, `train_size_anon.ipynb` — анонимизированные (`data/2_clean.csv`, время
@@ -252,7 +252,7 @@
 
 ## Запреты
 
-- Не править `report/Отчёт.tex` и `docs/notes/methods.md` без явного
+- Не править `report/report_tex/old_report.tex` и `docs/notes/methods.md` без явного
   подтверждения.
 - Не выносить логику эксперимента из блокнота в `app/` без просьбы.
 
