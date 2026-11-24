@@ -102,7 +102,7 @@ BBox: по истинным **move** (`label == 1`) на отображаемо�
 
 ## Разметка
 
-`y == "anomaly"` → `label 0`; предсказание anomaly → `0.0`, move → `1.0`, точка без оценки → `NaN`
+`l == "anomaly"` → `label 1`; предсказание anomaly → `1.0`, move → `0.0`, точка без оценки → `NaN`
 в `TrajectorySeries`.
 
 ## Гигиена ячеек

@@ -12,7 +12,7 @@ from app.evaluation.series import TrajectorySeries
 
 
 class ClassificationMetrics:
-    """Метрики бинарной классификации: аномалия — положительный класс (метка 0)."""
+    """Метрики бинарной классификации: аномалия — положительный класс (метка 1)."""
 
     @staticmethod
     def compute(prediction: TrajectorySeries, ground_truth: TrajectorySeries) -> Dict[str, float]:
@@ -58,7 +58,7 @@ class ClassificationMetrics:
         ground_truth: TrajectorySeries,
     ) -> Tuple[float, float, float, float]:
         """
-        Возвращает (TP, FP, FN, TN); положительный класс — аномалия (label == 0).
+        Возвращает (TP, FP, FN, TN); положительный класс — аномалия (label == 1).
 
         Считается только по точкам с оценкой: точки без оценки (NaN в предсказании) не входят.
 
@@ -177,15 +177,15 @@ if __name__ == "__main__":
     time = np.arange(count, dtype=np.float64)
     latitude = 43.04 + 0.001 * time
     longitude = 131.87 + 0.001 * time
-    labels = np.ones(count, dtype=np.float64)
-    labels[8:13] = 0.0
+    labels = np.zeros(count, dtype=np.float64)
+    labels[8:13] = 1.0
     latitude = latitude.copy()
     longitude = longitude.copy()
     latitude[8:13] += np.array([0.02, 0.05, 0.08, 0.05, 0.02])
     longitude[8:13] += np.array([0.01, 0.04, 0.01, -0.03, -0.01])
     predicted = labels.copy()
-    predicted[8:10] = 1.0
-    predicted[15] = 0.0
+    predicted[8:10] = 0.0
+    predicted[15] = 1.0
     ground_truth = TrajectorySeries(time, longitude, latitude, labels)
     prediction = TrajectorySeries(time, longitude.copy(), latitude.copy(), predicted)
     metrics = ClassificationMetrics.compute(prediction, ground_truth)

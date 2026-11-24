@@ -61,14 +61,14 @@ def plot_track_maps(
 
     Args:
         prediction: Ряд prediction (поля time, lon, lat, label).
-        ground_truth: Эталонный ряд; метка 0 — аномалия.
+        ground_truth: Эталонный ряд; метка 0 — штатный ход, 1 — аномалия.
         output_path: Базовый путь для PNG. Сохраняются *_ground_truth* и *_model*.
             Если None, фигуры показываются интерактивно (в ноутбуке — через IPython).
         title: Общий заголовок; к нему добавляются суффиксы панелей.
         figsize: Размер фигуры в дюймах.
         annotate: Подписывать индексы точек. По умолчанию True, если точек не больше 80.
         bbox: Окно карты [юг, запад, север, восток] в градусах. Если None — bbox по истинным
-            точкам move (label 1) с полем 5% от размаха по каждой стороне; линии обрезаются по окну.
+            точкам штатного хода (label 0) с полем 5% от размаха по каждой стороне; линии обрезаются по окну.
         use_basemap: Загружать тайлы OSM; при ошибке сети рисуется только трек на сером фоне.
         map_panel: Какие панели рисовать: both, ground_truth или model.
 
@@ -88,7 +88,7 @@ def plot_track_maps(
     labels = np.asarray(labels, dtype=np.float64)
     predicted = np.asarray(predicted, dtype=np.float64)
     if bbox is None:
-        move_mask = np.equal(labels, 1.0)
+        move_mask = np.equal(labels, 0.0)
         bbox = bbox_from_move_points(lon, lat, move_mask)
     limits = _limits_from_bbox(bbox)
     basemap = _load_basemap(limits[0], limits[2], limits[1], limits[3]) if use_basemap else None
@@ -476,12 +476,12 @@ def _to_seconds(time: np.ndarray) -> np.ndarray:
 
 def _marker_sizes(count: int) -> Tuple[int, int, int, int]:
     """
-    Размеры маркеров: TP (штатная), TN (аномалия), FN (пропуск), FP (ложная тревога).
+    Размеры маркеров: TN (штатная верно), TP (аномалия верно), FN (пропуск), FP (ложная тревога).
     Args:
         count: Количество точек
 
     Returns:
-        Tuple[int, int, int, int]: Размеры маркеров (TP, TN, FN, FP)
+        Tuple[int, int, int, int]: Размеры маркеров (TN, TP, FN, FP)
     """
     if count > 8_000:
         return 8, 14, 18, 16
@@ -503,13 +503,13 @@ def _story_indices(labels: np.ndarray, predicted: np.ndarray, max_labels: int = 
     """
     count = int(labels.size)
     chosen = {0, count - 1}
-    anomaly = np.flatnonzero(np.equal(labels, 0.0))
+    anomaly = np.flatnonzero(np.equal(labels, 1.0))
     if anomaly.size:
         chosen.add(int(anomaly[0]) - 1)
         chosen.add(int(anomaly[-1]) + 1)
         step = max(1, anomaly.size // max(1, max_labels // 4))
         chosen.update(int(index) for index in anomaly[::step][: max_labels // 2])
-    false_positive = np.flatnonzero(~np.equal(labels, 0.0) & np.equal(predicted, 0.0))
+    false_positive = np.flatnonzero(~np.equal(labels, 1.0) & np.equal(predicted, 1.0))
     if false_positive.size:
         step = max(1, false_positive.size // max(1, max_labels // 4))
         chosen.update(int(index) for index in false_positive[::step][: max_labels // 4])
@@ -591,7 +591,7 @@ def _draw_truth_map(
     normal_size, hit_size, _, _ = _marker_sizes(lon.size)
     line_width = 0.7 if lon.size > 8_000 else 2.9
     halo_width = 2.0 if lon.size > 8_000 else 5.6
-    anomaly = np.equal(labels, 0.0)
+    anomaly = np.equal(labels, 1.0)
     track_lon, track_lat = _broken_polyline(lon, lat, anomaly)
     ref_lon, ref_lat = _broken_polyline(reference_lon, reference_lat, ~reference_valid)
     _track_line(axis, track_lon, track_lat, color="white", linewidth=halo_width, zorder=2, solid_capstyle="round")
@@ -606,14 +606,14 @@ def _draw_truth_map(
         zorder=4,
         solid_capstyle="round",
     )
-    normal = ~np.equal(labels, 0.0)
+    normal = ~np.equal(labels, 1.0)
     _scatter_mask(axis, lon, lat, normal, s=normal_size, c=_COLOR_NORMAL, zorder=5, linewidths=0.15)
     _scatter_mask(axis, lon, lat, ~normal, s=hit_size, c=_COLOR_ANOMALY, zorder=6, linewidths=0.15)
     axis.set_title("Изначальный трек: штатный ход и аномалия")
     axis.legend(
         handles=[
             Line2D([0], [0], color=_COLOR_TRACK, linewidth=2.6, marker="o", label="Штатные точки"),
-            Line2D([0], [0], color=_COLOR_ANOMALY, marker="o", linestyle="None", label="Аномалия, y = 0"),
+            Line2D([0], [0], color=_COLOR_ANOMALY, marker="o", linestyle="None", label="Аномалия, l = 1"),
             Line2D([0], [0], color=_COLOR_REFERENCE, linestyle=(0, (7, 4)), linewidth=2.6, label="Эталон через разрыв"),
         ],
         loc="lower right",
@@ -643,18 +643,18 @@ def _draw_prediction_map(
         limits: Предельные значения
     """
     _draw_basemap(axis, basemap, limits)
-    gt_anomaly = np.equal(labels, 0.0)
-    pred_anomaly = np.equal(predicted, 0.0)
+    gt_anomaly = np.equal(labels, 1.0)
+    pred_anomaly = np.equal(predicted, 1.0)
     accepted = ~pred_anomaly
     normal_size, hit_size, miss_size, false_size = _marker_sizes(lon.size)
     line_width = 0.5 if lon.size > 8_000 else 1.4
     _track_line(axis, lon[accepted], lat[accepted], color=_COLOR_ACCEPTED, linewidth=line_width, zorder=2)
-    tp_mask = ~gt_anomaly & accepted
-    tn_mask = gt_anomaly & pred_anomaly
+    tn_mask = ~gt_anomaly & accepted
+    tp_mask = gt_anomaly & pred_anomaly
     fn_mask = gt_anomaly & accepted
     fp_mask = ~gt_anomaly & pred_anomaly
-    _scatter_mask(axis, lon, lat, tp_mask, s=normal_size, c=_COLOR_NORMAL, zorder=3, linewidths=0.15)
-    _scatter_mask(axis, lon, lat, tn_mask, s=hit_size, c=_COLOR_HIT, zorder=4, linewidths=0.15)
+    _scatter_mask(axis, lon, lat, tn_mask, s=normal_size, c=_COLOR_NORMAL, zorder=3, linewidths=0.15)
+    _scatter_mask(axis, lon, lat, tp_mask, s=hit_size, c=_COLOR_HIT, zorder=4, linewidths=0.15)
     _scatter_mask(
         axis, lon, lat, fn_mask, s=miss_size, c=_COLOR_ANOMALY, marker="X", zorder=5, linewidths=0.6
     )
@@ -664,8 +664,8 @@ def _draw_prediction_map(
     axis.set_title("Разметка модели")
     axis.legend(
         handles=[
-            Line2D([0], [0], color=_COLOR_NORMAL, marker="o", linestyle="None", label="TP — штатная верно"),
-            Line2D([0], [0], color=_COLOR_HIT, marker="o", linestyle="None", label="TN — аномалия верно"),
+            Line2D([0], [0], color=_COLOR_NORMAL, marker="o", linestyle="None", label="TN — штатная верно"),
+            Line2D([0], [0], color=_COLOR_HIT, marker="o", linestyle="None", label="TP — аномалия верно"),
             Line2D([0], [0], color=_COLOR_ANOMALY, marker="X", linestyle="None", label="FN — пропуск аномалии"),
             Line2D([0], [0], color=_COLOR_FALSE, marker="^", linestyle="None", label="FP — ложная тревога"),
             Line2D([0], [0], color=_COLOR_ACCEPTED, label="Маршрут, принятый моделью"),
@@ -695,7 +695,7 @@ def _reference_coordinates(
     lat_ref = lat.copy()
     lon_ref = lon.copy()
     valid = np.ones(lat.shape, dtype=bool)
-    anomaly = np.equal(labels, 0.0)
+    anomaly = np.equal(labels, 1.0)
     if not np.any(anomaly):
         return lat_ref, lon_ref, valid
     padded = np.concatenate(([False], anomaly, [False]))
@@ -803,15 +803,15 @@ if __name__ == "__main__":
     demo_time = np.arange(count, dtype=np.float64)
     demo_latitude = 43.04 + 0.001 * demo_time
     demo_longitude = 131.87 + 0.001 * demo_time
-    demo_labels = np.ones(count, dtype=np.float64)
-    demo_labels[8:13] = 0.0
+    demo_labels = np.zeros(count, dtype=np.float64)
+    demo_labels[8:13] = 1.0
     demo_latitude = demo_latitude.copy()
     demo_longitude = demo_longitude.copy()
     demo_latitude[8:13] += np.array([0.02, 0.05, 0.08, 0.05, 0.02])
     demo_longitude[8:13] += np.array([0.01, 0.04, 0.01, -0.03, -0.01])
     demo_predicted = demo_labels.copy()
-    demo_predicted[8:10] = 1.0
-    demo_predicted[15] = 0.0
+    demo_predicted[8:10] = 0.0
+    demo_predicted[15] = 1.0
     demo_ground_truth = TrajectorySeries(demo_time, demo_longitude, demo_latitude, demo_labels)
     demo_prediction = TrajectorySeries(
         demo_time, demo_longitude.copy(), demo_latitude.copy(), demo_predicted

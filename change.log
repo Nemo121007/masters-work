@@ -1,10 +1,25 @@
-## 2026-11-24 — инструкции: новая структура report/, отчётные файлы
+## 2026-11-24 — отчётный блокнот: исправления заполненных блоков
 
-- AGENTS.md: «Канон» — отчётные файлы `report/report.tex` и `report/example_model.ipynb` набираются по одному блоку с согласованием, `old_report.tex` устарел и не правится, `notebooks/` — рабочие блокноты; «Запреты», таблица правил, этап 4 — под новую структуру; пути к `report/manuals/`.
-- .claude/rules/report.md, .claude/rules/notebooks.md: пути от корня проекта к `report/manuals/`; правила отчётных файлов.
-- .claude/skills/report/SKILL.md: отчёт — `report/report.tex`, порядок по одному абзацу с согласованием; пути к `report/manuals/`.
-- .claude/skills/new-detector/SKILL.md, .claude/agents/reviewer.md, notebooks/AGENTS.md: отчётные файлы вместо `Отчёт.tex`, пути от корня.
-- .claude/settings.json, opencode.jsonc: подтверждение правки — `report/report.tex`, `report/example_model.ipynb`, `report/report_tex/old_report.tex` вместо `report/Отчёт.tex`.
-- .opencode/commands/report.md: описание команды — `report/report.tex`.
-- docs/notes/methods.md: ссылки на отчёт и `report/manuals/`.
-- report/manuals/*.md: пути от корня проекта; notebook_review.md — п. 6 заменён новым порядком набора отчёта, отметка об удалённом `run_results_2026-10-31.md`.
+- report/example_model.ipynb: ячейка импортов — корень проекта добавляется в `sys.path` до импорта `app.*`, импорты разбиты на группы.
+- report/example_model.ipynb: ячейка констант — убраны установка `path_root` (перенесена в ячейку импортов) и `TEST_SPLIT`, `TRAIN_BLOCK_*` (переходят в ячейки разбиения), докстринг `nfmt` по правилам стиля.
+- report/manuals/glossary.md: $i$ — номер записи и точки; $\varphi$, $\lambda$ без альтернатив; $l_i$ — бинарный статус (0 — штатный ход, 1 — аномалия), $\hat l_i$, $a_i$ — под новую кодировку; запрет move/anomaly в отчётных файлах; термины «аномалия», «эпизод аномалии» через $l_i=1$.
+- report/manuals/rewrite_plan.md: «Принятые решения» — обозначения отчётных файлов ($i$, $\varphi$, $\lambda$, $l_i\in\{0,1\}$, без move/anomaly).
+
+## 2026-11-24 — кодировка метки: 0 — штатный ход, 1 — аномалия
+
+- app/evaluation/series.py: `anomaly_mask` — `label == 1`; проверка меток — только 0, 1 или NaN; докстринги.
+- app/evaluation/classification_metrics.py: докстринги — положительный класс `label == 1`; демо в `__main__` на новой кодировке.
+- app/evaluation/temporal_metrics.py, geospatial_metrics.py, trajectory_metrics.py: демо в `__main__` на новой кодировке.
+- app/viz/track_osm.py: аномалия — `label == 1`, штатный ход для окна карты — `label == 0`; легенда «Аномалия, l = 1»; докстринги, демо.
+- notebooks/example_model.ipynb, example_model_anon.ipynb, train_size.ipynb, train_size_anon.ipynb: `attach_binary_label` и `trajectory_series_pair` — аномалия → 1, штатный ход → 0; докстринги и markdown предобработки и MCC.
+- notebooks/examples_metrics.ipynb: синтетические ряды и предсказания на новой кодировке, описание метки.
+- report/example_model.ipynb: `attach_binary_label`, `trajectory_series_pair`, докстринг `confusion_counts` — новая кодировка; во вводном абзаце предобработки — «label кодируется единицей, штатный ход — нулём».
+- AGENTS.md, .claude/agents/reviewer.md, notebooks/AGENTS.md: соглашение о данных — метка 0 — штатный ход, 1 — аномалия.
+- report/manuals/glossary.md: `label`: move → 0, anomaly → 1.
+- report/manuals/rewrite_plan.md: «Принятые решения» — код на той же кодировке; запись о точке без оценки — новая кодировка.
+
+## 2026-11-24 — легенда карты и переводы строк
+
+- app/viz/track_osm.py: легенда разметки модели — «TN — штатная верно», «TP — аномалия верно» (были перепутаны), имена масок и докстринг размеров маркеров.
+- AGENTS.md, .claude/skills/check-app/SKILL.md, .opencode/commands/check-app.md, .claude/agents/reviewer.md: `app/*.py` — переводы строк LF (как в репозитории), правило CRLF убрано.
+- .claude/skills/new-detector/SKILL.md, .claude/skills/new-detector/insert_cells.py: скрипт сохраняет переводы строк исходного блокнота (LF или CRLF), а не только CRLF.

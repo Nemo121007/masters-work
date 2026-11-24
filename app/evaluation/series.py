@@ -8,7 +8,7 @@ import numpy as np
 class TrajectorySeries:
     """Один ряд траектории: время, координаты и метка класса.
 
-    Метка 0 — аномалия, значение больше нуля — штатное состояние, ``NaN`` — точка без оценки
+    Метка 0 — штатный ход, 1 — аномалия (положительный класс), ``NaN`` — точка без оценки
     (только в предсказании: модель не дала оценку аномальности).
 
     Attributes:
@@ -30,7 +30,7 @@ class TrajectorySeries:
             time: Метки времени.
             lon: Долготы.
             lat: Широты.
-            label: Метки; 0 — аномалия, ``NaN`` — точка без оценки.
+            label: Метки; 0 — штатный ход, 1 — аномалия, ``NaN`` — точка без оценки.
 
         Raises:
             ValueError: Некорректная форма, длина, координаты или метки.
@@ -43,8 +43,8 @@ class TrajectorySeries:
 
     @property
     def anomaly_mask(self) -> np.ndarray:
-        """True в точках, где label == 0."""
-        return np.equal(self.label, 0.0)
+        """True в точках, где label == 1."""
+        return np.equal(self.label, 1.0)
 
     @property
     def unscored_mask(self) -> np.ndarray:
@@ -118,6 +118,7 @@ class TrajectorySeries:
             raise ValueError("time, lon, lat и label должны иметь одинаковую длину.")
         if self.time.size == 0:
             raise ValueError("Ряд не должен быть пустым.")
-        if np.any(np.isinf(self.label)):
-            raise ValueError("Метки должны быть конечными числами или NaN (точка без оценки).")
+        scored = self.label[~np.isnan(self.label)]
+        if np.any((scored != 0.0) & (scored != 1.0)):
+            raise ValueError("Метки должны быть 0 (штатный ход), 1 (аномалия) или NaN (точка без оценки).")
         self.validate_coordinates()
