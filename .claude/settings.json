@@ -16,7 +16,9 @@
       "Bash(file *)"
     ],
     "ask": [
-      "Edit(**/report/Отчёт.tex)",
+      "Edit(**/report/report.tex)",
+      "Edit(**/report/example_model.ipynb)",
+      "Edit(**/report/report_tex/old_report.tex)",
       "Edit(**/docs/notes/methods.md)",
       "Bash(.venv/bin/pip *)",
       "Bash(~/.local/bin/uv pip *)",

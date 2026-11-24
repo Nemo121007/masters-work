@@ -23,9 +23,10 @@
 | Файлы | Правила |
 | --- | --- |
 | `app/**/*.py` | раздел «Стиль кода» ниже; проверка — скилл `check-app` |
-| `notebooks/*.ipynb` | `notebooks/AGENTS.md`; markdown-ячейки — `report/style.md`, `report/glossary.md` |
-| `report/report_tex/old_report.tex` | скилл `report`, `report/style.md`, `report/glossary.md` |
-| `docs/notes/*.md`, `report/*.md` | `report/style.md`, `report/glossary.md` |
+| `notebooks/*.ipynb` | `notebooks/AGENTS.md`; markdown-ячейки — `report/manuals/style.md`, `report/manuals/glossary.md` |
+| `report/report.tex` | раздел «Канон»; скилл `report`, `report/manuals/style.md`, `report/manuals/glossary.md` |
+| `report/example_model.ipynb` | раздел «Канон»; `notebooks/AGENTS.md`, `report/manuals/style.md`, `report/manuals/glossary.md` |
+| `docs/notes/*.md`, `report/manuals/*.md` | `report/manuals/style.md`, `report/manuals/glossary.md` |
 
 Если файл правил недоступен — сообщить об этом в отчёте; содержимое не подменять предположениями.
 
@@ -77,14 +78,14 @@
   и отсылает к ней. Вызывается только по команде пользователя.
 - Команды OpenCode (`.opencode/commands/`): `/check-app`, `/run-notebook`, `/new-detector`, `/report`, `/review`.
 - Текущая ревизия `notebooks/example_model.ipynb` — рабочий контекст, порядок действий, состояние и открытые
-  вопросы в `report/notebook_review.md`; при возобновлении работы читать первым, в конце шага — обновлять.
-- Принятые решения по методике и коду — раздел «Принятые решения» в `report/rewrite_plan.md`;
+  вопросы в `report/manuals/notebook_review.md`; при возобновлении работы читать первым, в конце шага — обновлять.
+- Принятые решения по методике и коду — раздел «Принятые решения» в `report/manuals/rewrite_plan.md`;
   каждое новое решение записывать туда сразу и опираться на них при правках.
-- Отчёт — скилл `report`; план переписывания по этапам — `report/rewrite_plan.md`;
-  обозначения и термины — `report/glossary.md`. Глоссарий актуализировать в том же
+- Отчёт — скилл `report`; план переписывания по этапам — `report/manuals/rewrite_plan.md`;
+  обозначения и термины — `report/manuals/glossary.md`. Глоссарий актуализировать в том же
   задании, где в отчёте, блокноте или `docs/notes/` появилось новое или изменённое обозначение или термин.
-- Правила текста для отчёта, markdown-ячеек блокнотов и `docs/notes/` — `report/style.md`; соблюдать при любой
-  правке текста, в том числе в `report/rewrite_plan.md`.
+- Правила текста для отчёта, markdown-ячеек блокнотов и `docs/notes/` — `report/manuals/style.md`; соблюдать при любой
+  правке текста, в том числе в `report/manuals/rewrite_plan.md`.
 - Права: Claude Code — `.claude/settings.json`, OpenCode — `opencode.jsonc`; менять согласованно.
 
 ## Согласование действий
@@ -108,9 +109,9 @@
   (имена, порядок кода, способ проверки) принимаются самостоятельно.
 - Если план или принятое решение требует существенного изменения — сначала причина и конкретная корректировка,
   затем зависимая от неё работа.
-- Если документ-источник (решение в `report/rewrite_plan.md`, `report/notebook_review.md`, глоссарий,
+- Если документ-источник (решение в `report/manuals/rewrite_plan.md`, `report/manuals/notebook_review.md`, глоссарий,
   markdown модели) оказался неверен — исправить его явно и сообщить в отчёте; молча от него не отходить.
-  `report/report_tex/old_report.tex` и `docs/notes/methods.md` — после подтверждения (раздел «Запреты»).
+  Отчётные файлы и `docs/notes/methods.md` — по разделам «Канон» и «Запреты».
 - Выполненная проверка и предположение различаются: в отчёте — только реально запущенные проверки
   с результатом; непроверенное помечается явно, недоступный инструмент или данные — как ограничение.
 - Ошибка кода и ошибка окружения (нет пакета, данных, памяти, сети) различаются и называются явно;
@@ -124,12 +125,12 @@
 2. Правка блокнота: код и markdown модели.
 3. Проверка: дымовой прогон затронутой модели или `notebooks/checks/verify_*.py`; проверки моделей —
    по одной. Блокнот целиком запускает пользователь.
-4. Правка `report/report_tex/old_report.tex`, `docs/notes/`, глоссария.
+4. Правка отчётных файлов (по одному блоку, раздел «Канон»), `docs/notes/`, глоссария.
 5. Коммит — только по команде пользователя.
 
 Утверждённая очередь однотипных проверок выполняется без вопросов между моделями: прошла — сообщить
 результат и перейти к следующей, не прошла или нужно решение — сообщить явно и ждать ответа.
-Решения сразу записываются в «Принятые решения» `report/rewrite_plan.md`.
+Решения сразу записываются в «Принятые решения» `report/manuals/rewrite_plan.md`.
 
 ## Отчёт о задаче
 
@@ -218,7 +219,13 @@
 
 ## Канон
 
-- Источник истины: `notebooks/example_model.ipynb` и `report/report_tex/old_report.tex`.
+- Отчётные файлы: `report/report.tex` — текст работы, `report/example_model.ipynb` — отчётный блокнот.
+  Набираются по одному блоку: абзац отчёта или ячейка блокнота. Текст блока предлагается в ответе
+  и вносится в файл только после согласования; несколько блоков одной правкой не вносятся.
+- `report/report_tex/old_report.tex` — устаревший отчёт: источник текста для `report/report.tex`,
+  не правится, позднее удаляется.
+- Рабочие блокноты — `notebooks/`: эксперименты и отладка, правка по команде на редактирование кода без
+  согласования каждой ячейки. Источник кода и методики для отчётного блокнота — `notebooks/example_model.ipynb`.
 - Правила оформления блокнотов — `notebooks/AGENTS.md`.
 - Два варианта блокнотов: `example_model.ipynb`, `train_size.ipynb` — реальные данные (`data/2.csv`);
   `example_model_anon.ipynb`, `train_size_anon.ipynb` — анонимизированные (`data/2_clean.csv`, время
@@ -252,8 +259,8 @@
 
 ## Запреты
 
-- Не править `report/report_tex/old_report.tex` и `docs/notes/methods.md` без явного
-  подтверждения.
+- Не вносить в `report/report.tex` и `report/example_model.ipynb` блок, текст которого не согласован.
+- Не править `report/report_tex/old_report.tex`; `docs/notes/methods.md` — только после явного подтверждения.
 - Не выносить логику эксперимента из блокнота в `app/` без просьбы.
 
 ## Проверка

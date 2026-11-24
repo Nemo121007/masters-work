@@ -37,7 +37,7 @@ tools: Read, Bash
    и декоративного полужирного; набор метрик test и порядок вывода ячейки — по `notebooks/AGENTS.md`;
    модель зарегистрирована в `_model_summary_catalog`; JSON блокнота корректен
    (`.venv/bin/python -m json.tool <файл> > /dev/null`).
-5. Границы задания. Не изменены `../../report/report_tex/old_report.tex` и `docs/notes/methods.md` без подтверждения; логика
+5. Границы задания. В `report/report.tex` и `report/example_model.ipynb` — только согласованные блоки, `old_report.tex` не изменён, `docs/notes/methods.md` — только с подтверждением; логика
    эксперимента не вынесена в `app/`; новый сторонний пакет есть и в `requirements.txt`, и в `pyproject.toml`.
 6. Журнал. В `change.log` есть блок задания в формате `## <дата> — <задание>` и строки
    `<файл>: <что сделано>` по каждому изменённому файлу; запись соответствует фактическим изменениям.

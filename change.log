@@ -1,11 +1,10 @@
-## 2026-11-20 — задачи: анонимизированные данные и редактирование отчёта
+## 2026-11-24 — инструкции: новая структура report/, отчётные файлы
 
-- report/notebook_review.md: «Открытые вопросы», п. 5 — переход на `data/2_clean.csv` с найденными отличиями формата (время в секундах, сдвиг координат, `is_water`); п. 6 — редактирование отчёта.
-- report/notebook_review.md: п. 5 — способ анонимизации (вычитание первой записи) и его влияние на масштаб долготы, диапазоны координат.
-- report/rewrite_plan.md: «Принятые решения» — эксперимент на `data/2_clean.csv` без восстановления широты, метрики в метрах не сопоставимы с прежними.
-- report/rewrite_plan.md: решение — два варианта блокнотов (реальные и анонимизированные данные) с независимым кодом.
-- notebooks/example_model_anon.ipynb, notebooks/train_size_anon.ipynb: новые варианты блокнотов на анонимизированных данных `data/2_clean.csv` — путь к данным, перевод `time` из секунд в дату-время при чтении, описание варианта в первой ячейке; код моделей совпадает с основными блокнотами.
-- notebooks/*.ipynb: выводы ячеек очищены во всех четырёх блокнотах.
-- AGENTS.md: «Канон» — правило двух вариантов блокнотов (реальные и анонимизированные данные), правка модели — в оба; большие блокноты — `example_model*.ipynb`.
-- .claude/rules/notebooks.md: правка модели вносится в оба варианта, включая `*_anon.ipynb`.
-- report/notebook_review.md: п. 5 отмечен выполненным.
+- AGENTS.md: «Канон» — отчётные файлы `report/report.tex` и `report/example_model.ipynb` набираются по одному блоку с согласованием, `old_report.tex` устарел и не правится, `notebooks/` — рабочие блокноты; «Запреты», таблица правил, этап 4 — под новую структуру; пути к `report/manuals/`.
+- .claude/rules/report.md, .claude/rules/notebooks.md: пути от корня проекта к `report/manuals/`; правила отчётных файлов.
+- .claude/skills/report/SKILL.md: отчёт — `report/report.tex`, порядок по одному абзацу с согласованием; пути к `report/manuals/`.
+- .claude/skills/new-detector/SKILL.md, .claude/agents/reviewer.md, notebooks/AGENTS.md: отчётные файлы вместо `Отчёт.tex`, пути от корня.
+- .claude/settings.json, opencode.jsonc: подтверждение правки — `report/report.tex`, `report/example_model.ipynb`, `report/report_tex/old_report.tex` вместо `report/Отчёт.tex`.
+- .opencode/commands/report.md: описание команды — `report/report.tex`.
+- docs/notes/methods.md: ссылки на отчёт и `report/manuals/`.
+- report/manuals/*.md: пути от корня проекта; notebook_review.md — п. 6 заменён новым порядком набора отчёта, отметка об удалённом `run_results_2026-10-31.md`.
