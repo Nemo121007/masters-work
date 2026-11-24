@@ -1,0 +1,101 @@
+\documentclass[a4paper,12pt]{report}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{lmodern}
+\DeclareFontFamily{T2A}{lmr}{}
+\DeclareFontShape{T2A}{lmr}{m}{n}{<->ssub*cmr/m/n}{}
+\DeclareFontShape{T2A}{lmr}{bx}{n}{<->ssub*cmr/bx/n}{}
+\DeclareFontShape{T2A}{lmr}{b}{n}{<->ssub*cmr/bx/n}{}
+\DeclareFontShape{T2A}{lmr}{m}{it}{<->ssub*cmr/m/it}{}
+\DeclareFontShape{T2A}{lmr}{m}{sl}{<->ssub*cmr/m/sl}{}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{fancyvrb}
+\usepackage{appendix}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{hyphenat}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\makeatletter
+\renewcommand\@biblabel[1]{#1.}
+% \paragraph --- отдельной строкой: положительный отступ после заголовка, текст после него --- новый абзац.
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}{3.25ex \@plus1ex \@minus.2ex}{1ex \@plus.2ex}{\normalfont\normalsize\bfseries}}
+\makeatother
+
+\newcommand{\myrule}[1]{\rule{#1}{0.4pt}}
+\newcommand{\sign}[2][~]{{\small\myrule{#2}\\[-0.7em]\makebox[#2]{\it #1}}}
+
+% Поля
+\usepackage[top=20mm, left=30mm, right=15mm, bottom=20mm, includefoot]{geometry}
+\usepackage{indentfirst}
+\footskip 20pt
+
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\setcounter{secnumdepth}{4}
+
+\bibliographystyle{gost780s}  %% стилевой файл для оформления по ГОСТу
+
+\lstset{
+	basicstyle=\footnotesize,           % the size of the fonts that are used for the code
+	numbers=left,                   % where to put the line-numbers
+	numberstyle=\tiny\color{gray},
+	captionpos=b,                   % sets the caption-position to bottom
+	breaklines=true,                % sets automatic line breaking
+}
+
+\begin{document}
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%                         %%%
+	%%% Начало титульного листа %%%
+	
+	\thispagestyle{empty}
+	{ \large
+		%%% Название работы %%%
+		\begin{center}
+			\renewcommand{\baselinestretch}{1.2}
+			\Large
+			{\Large Анализ зашумленных и частично наблюдаемых данных судовых навигационных систем}
+		\end{center}
+		\medskip%
+		
+		\vspace{3\bigskipamount}%
+		\begin{flushright}
+			\begin{minipage}{0.5\textwidth}
+				\begin{flushleft}
+					Гашков С.П.
+				\end{flushleft}
+			\end{minipage}
+		\end{flushright}
+		
+		\vfill%
+	}
+	
+	%%% Конец титульного листа  %%%
+	%%%                         %%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+		% Размер шрифта (14пт)
+	\large
+	
+	% Межстрочный интервал (полуторный)
+	\onehalfspacing
+	
+	\clearpage
+	\renewcommand{\thesection}{\arabic{section}}
+	\graphicspath{{../pict/}}
+	
+	\tableofcontents
+	\newpage
+	
+	\section{Постановка задачи}
+	
+	
+\end{document}

@@ -18,10 +18,12 @@ data/raw/5.csv
 *csv
 1.md
 *__pycache__*
-report/*.aux
-report/*.log
-report/*.out
-report/*.pdf
-report/*.gz
+*.aux
+*.log
+*.out
+*.pdf
+*.gz
+*.toc
 *.png
+*.local.json
 notebooks/trained_models/
