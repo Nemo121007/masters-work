@@ -1,25 +1,72 @@
-## 2026-11-24 — отчётный блокнот: исправления заполненных блоков
+## 2026-11-24 — отчётный блокнот: блоки по очереди
 
-- report/example_model.ipynb: ячейка импортов — корень проекта добавляется в `sys.path` до импорта `app.*`, импорты разбиты на группы.
-- report/example_model.ipynb: ячейка констант — убраны установка `path_root` (перенесена в ячейку импортов) и `TEST_SPLIT`, `TRAIN_BLOCK_*` (переходят в ячейки разбиения), докстринг `nfmt` по правилам стиля.
-- report/manuals/glossary.md: $i$ — номер записи и точки; $\varphi$, $\lambda$ без альтернатив; $l_i$ — бинарный статус (0 — штатный ход, 1 — аномалия), $\hat l_i$, $a_i$ — под новую кодировку; запрет move/anomaly в отчётных файлах; термины «аномалия», «эпизод аномалии» через $l_i=1$.
-- report/manuals/rewrite_plan.md: «Принятые решения» — обозначения отчётных файлов ($i$, $\varphi$, $\lambda$, $l_i\in\{0,1\}$, без move/anomaly).
-
-## 2026-11-24 — кодировка метки: 0 — штатный ход, 1 — аномалия
-
-- app/evaluation/series.py: `anomaly_mask` — `label == 1`; проверка меток — только 0, 1 или NaN; докстринги.
-- app/evaluation/classification_metrics.py: докстринги — положительный класс `label == 1`; демо в `__main__` на новой кодировке.
-- app/evaluation/temporal_metrics.py, geospatial_metrics.py, trajectory_metrics.py: демо в `__main__` на новой кодировке.
-- app/viz/track_osm.py: аномалия — `label == 1`, штатный ход для окна карты — `label == 0`; легенда «Аномалия, l = 1»; докстринги, демо.
-- notebooks/example_model.ipynb, example_model_anon.ipynb, train_size.ipynb, train_size_anon.ipynb: `attach_binary_label` и `trajectory_series_pair` — аномалия → 1, штатный ход → 0; докстринги и markdown предобработки и MCC.
-- notebooks/examples_metrics.ipynb: синтетические ряды и предсказания на новой кодировке, описание метки.
-- report/example_model.ipynb: `attach_binary_label`, `trajectory_series_pair`, докстринг `confusion_counts` — новая кодировка; во вводном абзаце предобработки — «label кодируется единицей, штатный ход — нулём».
-- AGENTS.md, .claude/agents/reviewer.md, notebooks/AGENTS.md: соглашение о данных — метка 0 — штатный ход, 1 — аномалия.
-- report/manuals/glossary.md: `label`: move → 0, anomaly → 1.
-- report/manuals/rewrite_plan.md: «Принятые решения» — код на той же кодировке; запись о точке без оценки — новая кодировка.
-
-## 2026-11-24 — легенда карты и переводы строк
-
-- app/viz/track_osm.py: легенда разметки модели — «TN — штатная верно», «TP — аномалия верно» (были перепутаны), имена масок и докстринг размеров маркеров.
-- AGENTS.md, .claude/skills/check-app/SKILL.md, .opencode/commands/check-app.md, .claude/agents/reviewer.md: `app/*.py` — переводы строк LF (как в репозитории), правило CRLF убрано.
-- .claude/skills/new-detector/SKILL.md, .claude/skills/new-detector/insert_cells.py: скрипт сохраняет переводы строк исходного блокнота (LF или CRLF), а не только CRLF.
+- report/example_model.ipynb: вводный абзац предобработки — нумерация записей $i$, статус до и после бинаризации ($l_i\in\{0,1\}$), без устаревших «двух пар выборок».
+- report/example_model.ipynb: шаг 1 «Бинаризация» — строковый статус, удаление записей с другими статусами, множество $\mathcal J_1$, бинарный статус $l_i\in\{0,1\}$.
+- report/example_model.ipynb: код шага 1 — `binarize_status`: записи штатного хода и аномалии, строковый статус → 0/1 (`STATUS_CODES`); результат в `frame`, `raw_full` не меняется.
+- report/example_model.ipynb: шаг 2 «Упорядочивание» — сортировка по $t_i$ с сохранением порядка файла при равном времени, без неопределённого $\mathcal J$.
+- report/example_model.ipynb: код шага 2 — сортировка `frame` после бинаризации, докстринг `sort_by_time` по правилам.
+- report/example_model.ipynb: шаг 3 «Отбор столбцов» — $l_i$ — статус, без неопределённого $N$, приведение координат к числам.
+- report/example_model.ipynb: код шага 3 — отбор столбцов из `frame`, докстринги `select_trajectory_columns` и `coerce_coordinate_columns`, без вывода неизменного числа строк.
+- report/example_model.ipynb: шаг 4 «Валидные координаты» — условия на запись без неопределённого $\mathcal J$, включая заданность координат.
+- report/example_model.ipynb: код шага 4 — докстринги фильтров координат по правилам, вывод в записях.
+- report/example_model.ipynb: шаг 5 «Обрезка» — $i_{\min}$, $i_{\max}$ по точкам штатного хода, переход к точкам ряда $i=0,\ldots,N-1$, без преждевременной фразы про ENU.
+- report/example_model.ipynb: код шага 5 — обрезка по числовому статусу `l == 0`, `ValueError` при отсутствии штатного хода, вывод в точках.
+- report/example_model.ipynb: `wgs84_to_ecef` — секция `Returns` без повтора типа.
+- report/example_model.ipynb: `wgs84_to_ecef` — секция `Returns` без повтора типа.
+- report/example_model.ipynb: теория ENU — $y_i$ вместо $l_i$, «начало координат ENU» и «плоскость ENU» по глоссарию.
+- report/example_model.ipynb: докстринг `wgs84_to_enu` — «начало координат» вместо «опорной точки», `Returns` без повтора типа.
+- report/example_model.ipynb: «Локальная ENU» — начало координат ENU — первая точка ряда, плоскость ENU, без тождества и точки в заголовке.
+- report/example_model.ipynb: `add_local_enu` — докстринг по правилам.
+- report/manuals/rewrite_plan.md: «Принятые решения» — выборки в долях всего ряда: обучающая $[0.225N, 0.465N]$, тестовая $[0.6N, N)$.
+- report/example_model.ipynb: «Обучающая выборка» — интервал $[0.225N, 0.465N]$ всего ряда, сдвиг границ к точкам штатного хода, заголовок второго уровня.
+- report/example_model.ipynb: «Обучающая выборка» — пояснение, что доли найдены на ряде после обрезки.
+- report/example_model.ipynb: код обучающей выборки — `TRAIN_START`, `TRAIN_END`, `train_bounds` (крайние точки штатного хода в доле ряда), вывод границ, размера и доли аномалий.
+- report/example_model.ipynb: обучающая выборка — интервал $[0.247N, 0.511N]$ (прежний блок из `train_size.ipynb`) вместо ошибочного $[0.225N, 0.465N]$: текст ячейки и `TRAIN_START`, `TRAIN_END`.
+- report/manuals/rewrite_plan.md: решение о выборках исправлено — $[0.247N, 0.511N]$, причина расхождения с $0.225$/$0.465$.
+- report/example_model.ipynb: «Обучающая выборка» — границы $k_1$, $k_2$ по точкам штатного хода явно, формулами.
+- report/example_model.ipynb: «Тестовая выборка» вместо «Разбиение train / test» — начало $k_3$ — первая точка штатного хода не левее $0.6N$, крайние точки — штатный ход.
+- report/manuals/glossary.md: обозначения $k_1$, $k_2$, $k_3$ — границы обучающей и тестовой выборок.
+- report/example_model.ipynb: код обучающей выборки — `train_bounds` переименована в общую `move_bounds` (крайние точки штатного хода в доле ряда).
+- report/example_model.ipynb: «Тестовая выборка» — обе границы $k_3$, $k_4$ по точкам штатного хода.
+- report/example_model.ipynb: код тестовой выборки — `TEST_START`, `TEST_END`, `move_bounds`, вывод границ, размера и доли аномалий.
+- report/manuals/glossary.md: $k_3$, $k_4$ — границы тестовой выборки; столбец «В коде» для $k_1$–$k_4$.
+- report/example_model.ipynb: теория MCC — определение $TP$, $FP$, $FN$, $TN$ через $l_i$ и $\hat l_i$, «доля верных ответов (accuracy)», без висящей запятой после формулы.
+- report/manuals/glossary.md: термин «доля верных ответов (accuracy)».
+- report/example_model.ipynb: код MCC — докстринги `confusion_counts`, `mcc_from_counts`, `mcc_score` без move/anomaly и повтора типов.
+- report/example_model.ipynb: ячейка MCC — только `mcc_from_counts`; неиспользуемая `mcc_score` удалена; `confusion_counts` перенесена в ячейку кода раздела «Выбор порога», где её вызывает подбор порога.
+- report/example_model.ipynb: теория DL — заполненные траектории, длины в плоскости ENU (не геодезически), $\hat l_i=1$ по новой кодировке, «ошибка длины траектории (DL)» по глоссарию.
+- report/example_model.ipynb: реализация DL в плоскости ENU — `time_seconds`, `fill_anomalies_enu`, `path_length_m`, `distance_loss_m`.
+- report/example_model.ipynb: текст «Выбор порога» — шаги подбора, $\chi^2_{0.999}(2)$ для фильтра Калмана, определение операционной ошибки длины $\mathrm{DL}_{\mathrm{оп}}$; без перечня всех моделей и пустых строк в начале.
+- report/manuals/glossary.md: «операционная ошибка длины» — обозначения $\mathrm{DL}_{\mathrm{оп}}$, $L_{\mathrm{оп}}$.
+- report/example_model.ipynb: «Выбор порога» — пояснение, почему логарифмическая сетка начинается с 1-го перцентиля, а не с минимума.
+- report/manuals/rewrite_plan.md: «Принятые решения» — сетка кандидатов от 1-го перцентиля, применимость $\chi^2_{0.999}(2)$.
+- report/example_model.ipynb: код «Выбора порога» (ячейка после текста раздела) — `MCC_BAND`, `THRESHOLD_LOG_POINTS`, `threshold_candidates`, операционная ошибка длины (`operational_path_length_m` через `path_length_m`, `operational_distance_loss_m`), `_threshold_record`, `select_threshold_from_records` (без `_pick_mcc_band_record`); докстринги без move/anomaly, `ValueError` вместо `RuntimeError`; функции и константы удалены из ячеек «Надо очистить» и «Надо почистить».
+- report/example_model.ipynb: «Точки без оценки и покрытие» перенесён в раздел метрик после DL, перед «Выбором порога»; текст — определение, учёт в MCC, DL и DL_оп, три доли покрытия формулами через $U$ и $A$.
+- report/manuals/glossary.md: обозначения $U$, $A$ — точки без оценки и эталонные аномалии, доли покрытия.
+- report/example_model.ipynb: код покрытия — `coverage_shares` (три доли через $U$ и $A$, ключи как в `app.evaluation`).
+- report/example_model.ipynb: удалены пустая markdown-ячейка и ячейка «Перенести/удалить лишнее» (старое разбиение `attach_binary_label`, `split_train_test_move`, `train_block_bounds`, `describe_split`) — заменены ячейками обучающей и тестовой выборок.
+- report/example_model.ipynb: новый подраздел «Отклонение траекторий: RMSE и максимальное отклонение» (теория) после DL; RMSE — по всем точкам выборки.
+- report/manuals/rewrite_plan.md: «Принятые решения» — RMSE по всем точкам в отчётном блокноте.
+- report/manuals/glossary.md: RMSE — по всем точкам (отчётный блокнот), в `app.evaluation` — по $d_i>0$.
+- report/example_model.ipynb: код отклонения — `deviations_m` (через `fill_anomalies_enu`), `rmse_m` по всем точкам, `max_deviation_m`.
+- report/example_model.ipynb: новый подраздел «Задержка обнаружения» (теория) — эпизоды, $\delta_k$, штраф за пропуск, своевременные эпизоды, агрегаты по опозданиям и пропускам.
+- report/manuals/glossary.md: обозначения $s_k$, $e_k$, $j_k$, $\delta_k$.
+- report/example_model.ipynb: «Задержка обнаружения» — агрегаты задержки по всем эпизодам, включая своевременные.
+- report/manuals/rewrite_plan.md: «Принятые решения» — агрегаты задержки по всем эпизодам в отчётном блокноте.
+- report/manuals/glossary.md: «задержка обнаружения» — правило агрегатов в отчётном блокноте и в `app.evaluation`.
+- report/example_model.ipynb: код задержки — `anomaly_episodes`, `detection_delays_s` (точка без оценки — не обнаружение, пропуск — длительность эпизода), `delay_summary` (агрегаты по всем эпизодам, счётчики своевременных и опозданий с пропусками).
+- report/example_model.ipynb: новый раздел «Оценка на тестовой выборке» — текст; код `TEST_REPORT_METRICS` (русские подписи, шаблоны формата), `evaluate_test` на функциях блокнота (MCC, точность, полнота, F1, RMSE, максимальное отклонение, DL, задержка, покрытие), `display_test_report_table`; отдельная ячейка для карт — `trajectory_series_pair` (числовой статус), `slice_trajectory_series`; прежние версии и `test_report_row`, `_format_metric_value` удалены из ячейки «Надо почистить».
+- report/example_model.ipynb: раздел фильтра Калмана — ячейка отрезков и перезапуска прогноза (`TIME_GAP_SEC`, `enu_xy_from_frame`, `time_segments`, `move_segments` по числовому статусу, `restart_speed_limit` со встроенной `move_speeds`, `restart_allowed`; `time_seconds` вместо `time_seconds_from_frame`); старые копии удалены из ячеек «Надо очистить» и «Надо почистить».
+- report/example_model.ipynb: из ячеек «Надо очистить» и «Надо почистить» удалён код удалённых из отчётного блокнота моделей (AR/ARIMA, признаки и окна, DBSCAN, Robust PCA, нейросети), `load_or_train`, `FORCE_TRAIN` и константы нейросетей — 696 строк; остались `PLOT_TAIL`, `MAP_FIGSIZE`, `SHOW_PLOTS` и функции обучения фильтра Калмана.
+- report/example_model.ipynb: раздел фильтра Калмана — ячейка обучения (константы `KALMAN_*`, `_DIFFUSE_VAR_M2`, `kalman_process_noise`, `kalman_likelihood_data`, `kalman_loglike`, `fit_kalman_on_train`; `time_seconds`, `ValueError`); ячейка «Надо почистить» удалена.
+- report/example_model.ipynb: код фильтра Калмана — `kalman_detect` на `time_seconds`, `select_kalman_threshold` по числовому статусу, докстринги; новая ячейка запуска без цикла по сценариям и `load_or_train`: обучение, подбор порога, оценка на тестовой выборке, таблица, карты.
+- report/example_model.ipynb: теория фильтра Калмана — без ссылок на AR(2): условие перезапуска с $v_{\max}$, обучающие отрезки, прогноз и его ковариация, $\hat l_i$ вместо $\hat a_i$, подбор порога по разделу «Выбор порога».
+- report/manuals/glossary.md: обозначение $v_{\max}$ — предел скорости перезапуска прогноза.
+- report/example_model.ipynb: обучение фильтра Калмана — собственное правдоподобие (`kalman_likelihood_data` — список отрезков, `kalman_loglike` — тот же фильтр, что при обнаружении), без statsmodels и `_DIFFUSE_VAR_M2`.
+- report/example_model.ipynb: `fit_kalman_on_train` — среднее правдоподобие на точку и верхние границы `KALMAN_SIGMA_ACC_MAX`, `KALMAN_SIGMA_MEAS_MAX` (L-BFGS-B обрывался на NaN); теория — границы и среднее на точку.
+- notebooks/example_model.ipynb, example_model_anon.ipynb, train_size.ipynb, train_size_anon.ipynb: `fit_kalman_on_train` — то же исправление оптимизации (среднее на точку, верхние границы σ).
+- report/manuals/rewrite_plan.md: «Принятые решения» — исправление оценки σ фильтра Калмана, собственное правдоподобие в отчётном блокноте.
+- report/example_model.ipynb: `kalman_detect` упрощён — ковариация тремя числами на кандидата порога вместо матриц 4×4 (оси независимы и одинаковы), без `np.linalg`, `einsum` и `kalman_process_noise`; результат совпадает с прежним (оценки до 1e-7, отвергнутые точки — точно), в 3.7 раза быстрее; `kalman_process_noise` удалена.
+- report/example_model.ipynb: импорты — только используемые (sys, time, Path, Optional, numpy, pandas, display, minimize, chi2, TrajectorySeries, plot_track_maps), без torch, hmmlearn, sklearn, statsmodels; из ячейки констант удалены `SEED`, `rng`, `torch.manual_seed`.
+- report/example_model.ipynb: исправления по проверке — «Обучающая выборка»: восстановлено заключение формулы $k_1$, $k_2$, сравнение распределения с участком $[0, 0.6N)$; опечатки в «Выборе порога» и DL, DL по $n$ точкам выборки; вводный абзац — «ряд точек», «обучающая и тестовая выборки»; пунктуация в бинаризации и покрытии; заголовок карт; две длинные строки кода разбиты, хвостовые пробелы убраны.
+- report/manuals/glossary.md: $\rho$, «пул обучения», «обучающий блок» помечены как термины рабочих блокнотов; «обучающая выборка», «тестовая выборка» — интервалы отчётного блокнота.
