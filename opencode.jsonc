@@ -22,8 +22,6 @@
     },
     "edit": {
       "*": "allow",
-      "*report/report.tex": "ask",
-      "*report/example_model.ipynb": "ask",
       "*report/report_tex/old_report.tex": "ask",
       "*docs/notes/methods.md": "ask"
     },

@@ -62,7 +62,7 @@ class TemporalMetrics:
         """Считает задержки по эпизодам и агрегаты.
 
         В среднее, медиану, p95 и max входят опоздания (delay > 0 при детекции внутри
-        эпизода) и пропущенные эпизоды (штраф = длина эпизода). Детекция с первой точки
+        эпизода) и пропущенные эпизоды (штраф — время до первой точки после эпизода). Детекция с первой точки
         (delay = 0) в агрегаты не входит и учитывается в ``delay_n_on_time``; опоздания
         и пропуски — в ``delay_n_late_or_missed``.
 
@@ -127,8 +127,10 @@ class TemporalMetrics:
                 delay = float(time_s[detect_at] - time_s[start])
                 result.append((delay, start, end, True))
             else:
-                # Штраф = длина эпизода; входит в агрегаты delay вместе с опозданиями.
-                delay = float(time_s[end] - time_s[start])
+                # Штраф — время до первой точки после эпизода: пропуск хуже любого обнаружения,
+                # в том числе у эпизода из одной точки; у эпизода в конце ряда — его длительность.
+                after = min(end + 1, time_s.size - 1)
+                delay = float(time_s[after] - time_s[start])
                 result.append((delay, start, end, False))
         return result
 
