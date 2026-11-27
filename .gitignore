@@ -27,3 +27,6 @@ data/raw/5.csv
 *.png
 *.local.json
 notebooks/trained_models/
+
+# Журнал изменений агента: ведётся локально, в git не попадает
+change.log
